@@ -1,0 +1,320 @@
+﻿<title>权限分类管理</title>
+<style>
+  #nav span,.right span{display: none;}
+  #nav a{display: inline-block;width: 40px;height: 56px;text-align: center;border: 1px solid #f5f5f5;}
+  #nav a:nth-of-type(3){display: inline-block;width: 170px;height: 52px; text-align: left;padding-left: 20px;border-top: 2px solid #000;font-weight: bold;}
+  .right{display: inline-block;position: absolute;top: 0;right: 0;}
+  .layui-breadcrumb a{color: #000!important;}
+  .layui-table-header,.layui-table-view,.layui-table-box{overflow: visible;}
+  .layui-table-link:hover{color: #009688!important;}
+  .layui-card-header p{margin-top: 10px;margin-left: 10px;}
+  .layui-form-item .layui-input-block{display: inline-block;margin-left: -5px;}
+  #select .layui-form-select{width: 327px;}
+  label span{color: red; margin-right: 5px;}
+  .layui-transfer-header{position: relative;}
+  .layui-transfer-box:first-of-type{width: 410px!important;}
+  .layui-transfer-box:last-of-type{width: 360px!important;}
+  .layui-transfer-header{background: #009688;line-height: 38px;}
+  .layui-transfer-header .layui-form-checkbox[lay-skin=primary] span{margin-left: 30px; display: inline-block;height: 38px;line-height: 36px; color: #fff!important;}
+  .layui-form-checkbox[lay-skin=primary] span{margin-left: 30px; display: inline-block;height: 38px;line-height: 36px;}
+  .layui-form-checkbox[lay-skin=primary] span:first-of-type{margin-left: 0px;}
+  .layui-transfer-box .layui-form-checkbox i{top: 10px;}
+</style>
+<div class="layui-card layadmin-header">
+  <div class="layui-breadcrumb" lay-filter="breadcrumb" id="nav">
+    <a><i class="layui-icon layui-icon-prev"></i></a>
+    <a lay-href=''><i class="layui-icon layui-icon-home"></i></a>
+    <a>权限操作<i class="layui-icon layui-icon-close" style="margin-left: 50px"></i></a>
+    <div class="right">
+      <a><i class="layui-icon layui-icon-next"></i></a>
+      <a><i class="layui-icon layui-icon-down"></i></a>
+    </div>
+  </div>
+</div>
+<div class="layui-fluid">
+  <div class="layui-card" style="height: 760px;" id="index">
+    <div class="layui-card-body">
+      <div class="layui-btn-container" style="display: inline-block;margin-top: 20px;">
+        <button type="button" class="layui-btn layui-btn-sm" data-type="add"><i class="layui-icon">&#xe608;</i> 新建权限分类</button>
+        <!--<button type="button" class="layui-btn layui-btn-sm" data-type="edit"><i class="layui-icon">&#xe642;</i> 修改</button>-->
+        <button type="button" class="layui-btn layui-btn-sm" data-type="delLimit"><i class="layui-icon">&#xe640;</i> 删除权限分类</button>
+      </div>
+      <table id="test" lay-filter="test"></table>
+      <div id="demo8"></div>
+    </div>
+  </div>
+</div>
+
+<script type="text/html" id="titleTpl">
+  <a href="javascript:void(0);" class="layui-table-link" style="color:#000" onclick="go()">{{d.content}}</a>
+</script>
+<script type="text/html" id="fieldTemplate">
+  <form class='layui-form' lay-filter="editForm">
+    <div class="layui-form-item" style='margin-top:10px;'>
+      <label class="layui-form-label">分类名称</label>
+      <div class="layui-input-block" style='height:38px;width:327px;overflow:hidden;border-radius:2px;margin-left: 15px'>
+        <input id="person" type="text" name="name" lay-verify="title" autocomplete="off" placeholder="请输入" class="layui-input">
+      </div>
+    </div>
+    <!--<div class="layui-form-item" style='margin-top:10px;'>-->
+    <!--  <label class="layui-form-label">系统定义</label>-->
+      <!--<div class="layui-input-block" style='height:38px;width:327px;overflow:hidden;border-radius:2px;margin-left: 10px'  id="limitvalue">
+
+
+        <input type="radio" name="system"  class="layui-input" checked="checked" value="1">是
+        <input type="radio" name="system"  class="layui-input"  value="0"  >否
+
+      </div>
+    </div>-->
+    <div class="layui-form-item" style='margin-top:10px;'>
+      <label class="layui-form-label">权限描述</label>
+      <div class="layui-input-block" style='height:38px;width:327px;border-radius:2px;margin-left: 15px'>
+        <textarea name="desc" placeholder="请输入描述" class="layui-textarea"></textarea>
+      </div>
+    </div>
+    <input hidden="hidden" name="id">
+    <div class='layui-btn-container' style='margin:90px 0 0 290px;'>
+      <button class='layui-btn' type="button" lay-submit lay-filter ="addType">确定</button>
+      <button class="layui-btn" type="button" data-type="close">取消</button>
+    </div>
+  </form>
+</script>
+
+<!--操作列模板-->
+<script type="text/html" id="barDemo">
+
+  {{# if(d. status == 1){ }}
+  <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+  <a id="delete1" class="layui-btn layui-btn-disabled layui-btn-xs">删除</a>
+  <a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="changeStatus">已禁用  </a>
+
+
+  {{#} else  if(d. status == 0){ }}
+  <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+  <a id ="delete2" class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+  <a class="layui-btn layui-btn-xs" lay-event="changeStatus">已开启</a>
+
+  <!--<input type="checkbox" name="zzz" lay-skin="switch" lay-text="开启|关闭" lay-event="changeStatus">-->
+  {{# } }}
+</script>
+
+<!--显示分类名称列模板-->
+<script type="text/html" id="typeDemo">
+  {{#if(d.limitType===1){ }}
+  站点类
+  {{#} else if(d.limitType===2){ }}
+  栏目类
+  {{#} else if(d.limitType===3){ }}
+  栏目文档类
+  {{#} else if(d.limitType===4){ }}
+  公司类
+  {{#} else if(d.limitType===5){ }}
+  文档类
+  {{#} else if(d.limitType===6){ }}
+  菜单类
+  {{#} else if(d.limitType===7){ }}
+  模板类
+  {{#} }}
+
+</script>
+<script>
+   var url="/manage/limit/type";
+   var limitIndex;
+    $(function () {
+        doList(1,15);
+    })
+
+    layui.form.on("submit(addType)",function (data) {
+        console.log(JSON.stringify(data.field.id))
+        var id=data.field.id;
+        if (id===""||id===null){
+          var thisUrl=url;
+          var type="post";
+          var msg="添加成功"
+        }else{
+            thisUrl=url+"/"+id;
+            type="put";
+            msg="修改成功"
+        }
+        ajax(thisUrl,type,JSON.stringify(data.field)).then(res=>{
+            if(res.success){
+            res.msg=msg;
+            layer.alert(res.msg)
+            layer.close(limitIndex)
+            doList(1,15)
+           }
+        }).catch(res=>{
+        })
+        return false;
+    })
+    function changeStatus(data) {
+        ajax("/manage/limit/type/getStatus", "post", JSON.stringify(data.id)).then(res =>{
+
+            doList(1, 15)
+        })
+    }
+    //加载数据
+    function  doList(pageNo,size) {
+        var jsondata={
+            "pager":{
+                "current":pageNo,
+                "size":size
+            }
+        }
+        $.ajax({
+            type:"POST",
+            url:url+"/list",
+            contentType:"application/json",
+            data:JSON.stringify(jsondata),
+            dataType:"json",
+            success:function (data) {
+                // console.log(data.obj.records)
+                layui.use(['table','laypage'],function () {
+                    var table=layui.table,
+                        laypage=layui.laypage;
+                    table.render({
+                        elem:"#test"
+                        ,data:data.obj.records
+                        ,cols: [[
+                            {type:'checkbox',width:'3%'}
+                            ,{type:'numbers',width:'7%', title: '序号',align: 'right'}
+                            ,{field:'name', width:'460', title: '权限分类名称',align: 'left'}
+                            ,{field:'desc', width:'400', title: '权限描述',align: 'left'}
+                            ,{field:'system', width:'200', title: '是否系统定义',templet:"#sys",align: 'left'}
+                            ,{field:'', width:'300', title: '操作',toolbar: '#barDemo',align: 'left'}
+                        ]]
+                        ,limit:15
+                        ,done:function(){
+
+                            data.obj.records.forEach(function(v){
+
+                                if(v.system==1){
+                                    $("input:checkbox:eq("+(v.LAY_TABLE_INDEX+1)+")").prop("disabled",true);
+                                }
+                            })
+
+                        }
+                    });
+                    laypage.render({
+                        elem: 'demo8',
+                        count: data.obj.total, //数据总条数
+                        limit: data.obj.size, //每页条数
+                        curr: data.obj.current, //当前页码
+                        jump: function (obj, first) {
+                            if (!first) {
+                                doList(obj.curr,obj.limit);
+                            }
+                        }
+                    })
+
+                })
+            },
+            error:function (data) {
+                layer.alert(data.msg)
+            }
+        })
+    }
+
+   // 删除
+   function delById(id){
+     $.ajax({
+         type:"delete",
+         url:url+"/"+id,
+         dataType:"json",
+         success:function (data) {
+             layer.alert(data.msg);
+             doList(1,15)
+         }
+     })
+   }
+   //批量删除
+   active.delLimit=function () {
+       var checkStatus=layui.table.checkStatus("test"),
+           data=checkStatus.data;
+       var ids="";
+       for (var i in data){
+           ids=ids+data[i].id;
+           if(i<data.length-1){
+               ids=ids+",";
+           }
+       }
+       // console.log(ids)
+       if (ids.length===0){
+           layer.alert('请选择要删除的消息')
+           return
+       }
+       if (confirm("是否确定删除,该操作不可撤回")){
+           var dataIds={
+               "ids":ids
+           };
+           $.ajax({
+               type:"GET",
+               url:url+"/delByIds",
+               contentType:"application/json",
+               data:dataIds,
+               dataType:"json",
+               success:function (data) {
+                   layer.alert(data.msg)
+                   doList(1,10)
+               },
+               error:function (data) {
+                   layer.alert(data.msg)
+               }
+           })
+       }
+   }
+   function add(){
+           limitIndex=layer.open({
+               type: 1,
+               area: ['552px', '502px'],
+               title:'新建权限分类',
+               maxmin: true,
+               content: '<div id="fieldForm"></div>'
+           });
+           layui.laytpl($("#fieldTemplate").html()).render({}, function(html){
+               $("#fieldForm").html(html);
+               layui.form.render();
+           })
+       }
+   function edit(data) {
+           limitIndex = layer.open({
+               type: 1,
+               area: ['552px', '502px'],
+               title:'修改权限操作',
+               maxmin: true,
+               content: '<div id="fieldForm"></div>'
+           });
+           layui.laytpl($("#fieldTemplate").html()).render({}, function(html){
+               $("#fieldForm").html(html);
+               layui.form.val('editForm', data);
+           })
+       }
+
+
+
+   //监听操作列工具条
+   layui.table.on('tool(test)', function(obj){ //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
+       var data = obj.data; //获得当前行数据
+       var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+       var tr = obj.tr; //获得当前行 tr 的DOM对象
+
+       if(layEvent === 'del'){ //删除
+           layer.alert("确定删除:["+data.name+"]",function(){
+              delById(data.id)
+           })
+        }
+       else if(layEvent === 'edit'){ //编辑
+           edit(data)
+       }else if(layEvent === 'changeStatus'){ //编辑
+           changeStatus(data);
+
+       }
+   });
+</script>
+<script type="text/html" id="sys">
+  {{#if(d.system===1){ }}
+  系统定义
+  {{#} else if(d.system===0){ }}
+  用户定义
+  {{#} }}
+</script>

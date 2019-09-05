@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+        <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jnetdata.simple.manage.user.mapper.UserMapper">
+    <select id="list" resultType="com.jnetdata.simple.manage.user.model.User">
+        select t.*,
+        GROUP_CONCAT(e.ROLENAME) roleName,
+        GROUP_CONCAT(c.ROLEID) roleids
+        from (SELECT
+            a.USERID as id,a.USERNAME as name,a.TRUENAME as trueName,a.EMAIL as email,a.REGTIME as regTime,a.MOBILE as mobile,a.SEX as sex,a.headUrl as headUrl,a.sign,
+            a.CRUSER as crUser,
+            GROUP_CONCAT(d.GROUPNAME) groupName,
+            GROUP_CONCAT(b.GROUPID) groupids
+            FROM
+            userinfo a
+            LEFT JOIN grp_user b on a.USERID=b.USERID
+            LEFT JOIN groupinfo d on b.GROUPID = d.GROUPID
+            <where>
+                <if test="entity.name!= null and entity.name != '' ">
+                    and a.USERNAME like concat('%',#{entity.name},'%')
+                </if>
+                <if test="entity.trueName != null and entity.trueName!='' ">
+                    and a.TRUENAME like concat('%',#{entity.trueName},'%')
+                </if>
+                <if test="entity.sign != null and entity.sign!='' ">
+                    and a.SIGN = #{entity.sign}
+                </if>
+                <if test="entity.id != null and entity.id!='' ">
+                    and a.USERID like concat('%',#{entity.id},'%')
+                </if>
+                <if test="entity.email != null and entity.email!='' ">
+                    and a.EMAIL like concat('%',#{entity.email},'%')
+                </if>
+                <if test=" entity.sex != null and entity.sex !='' ">
+                    and sex = #{entity.sex}
+                </if>
+            </where>
+            GROUP BY a.USERID
+            having 1=1
+            <if test="entity.groupId != null and entity.groupId !='' ">
+                and groupids like concat('%',#{entity.groupId},'%')
+            </if>
+        ) t
+        LEFT JOIN role_user c on t.id=c.USERID
+        LEFT JOIN roleinfo e on c.ROLEID=e.ROLEID
+        GROUP BY t.id
+        having 1=1
+        <if test=" entity.roleId != null and entity.roleId !='' ">
+            and roleids like concat('%',#{entity.roleId},'%')
+        </if>
+	    limit #{pager.currNum},#{pager.size}
+    </select>
+
+    <select id="listTotal" resultType="int">
+        select count(1) from (
+            select
+            GROUP_CONCAT(c.ROLEID) roleids
+            from (
+              SELECT
+                a.USERID as id,a.USERNAME as name,a.TRUENAME as trueName,a.EMAIL as email,a.crtime as createTime,a.SEX as sex,a.CRUSER as crUser,
+                GROUP_CONCAT(d.GROUPNAME) groupName,
+                GROUP_CONCAT(b.GROUPID) groupids
+                FROM
+                userinfo a
+                LEFT JOIN grp_user b on a.USERID=b.USERID
+                LEFT JOIN groupinfo d on b.GROUPID = d.GROUPID
+                <where>
+                    <if test="entity.name!= null and entity.name != '' ">
+                        and a.USERNAME like concat('%',#{entity.name},'%')
+                    </if>
+                    <if test="entity.trueName != null and entity.trueName!='' ">
+                        and a.TRUENAME like concat('%',#{entity.trueName},'%')
+                    </if>
+                    <if test="entity.sign != null and entity.sign!='' ">
+                        and a.SIGN = #{entity.sign}
+                    </if>
+                    <if test="entity.id != null and entity.id!='' ">
+                        and a.USERID like concat('%',#{entity.id},'%')
+                    </if>
+                    <if test="entity.email != null and entity.email!='' ">
+                        and a.EMAIL like concat('%',#{entity.email},'%')
+                    </if>
+                    <if test=" entity.sex != null and entity.sex !='' ">
+                        and sex = #{entity.sex}
+                    </if>
+                </where>
+                GROUP BY a.USERID
+                having 1=1
+                <if test="entity.groupId != null and entity.groupId !='' ">
+                    and groupids like concat('%',#{entity.groupId},'%')
+                </if>
+            ) t
+            LEFT JOIN role_user c on t.id=c.USERID
+            LEFT JOIN roleinfo e on c.ROLEID=e.ROLEID
+            GROUP BY t.id
+            having 1=1
+            <if test=" entity.roleId != null and entity.roleId !='' ">
+                and roleids like concat('%',#{entity.roleId},'%')
+            </if>
+        ) u
+    </select>
+
+
+    <select id="getUsermess" resultType="com.jnetdata.simple.manage.user.model.User">
+        select t.*,
+        GROUP_CONCAT(e.ROLENAME) roleName,
+        GROUP_CONCAT(c.ROLEID) roleids
+        from (SELECT
+        a.USERID as id,a.USERNAME as name,a.TRUENAME as trueName,a.EMAIL as email,a.crtime as createTime,a.SEX as sex,a.CRUSER as crUser,
+        GROUP_CONCAT(d.GROUPNAME) groupName,
+        GROUP_CONCAT(b.GROUPID) groupids
+        FROM
+        userinfo a
+        LEFT JOIN grp_user b on a.USERID=b.USERID
+        LEFT JOIN groupinfo d on b.GROUPID = d.GROUPID
+        <where>
+            <if test="entity.name!= null and entity.name != '' ">
+                and a.USERNAME like concat('%',#{entity.name},'%')
+            </if>
+            <if test="entity.trueName != null and entity.trueName!='' ">
+                and a.TRUENAME like concat('%',#{entity.trueName},'%')
+            </if>
+
+        </where>
+        GROUP BY a.USERID
+        having 1=1
+        <if test="entity.groupId != null and entity.groupId !='' ">
+            and groupids like concat('%',#{entity.groupId},'%')
+        </if>
+
+        ) t
+        LEFT JOIN role_user c on t.id=c.USERID
+        LEFT JOIN roleinfo e on c.ROLEID=e.ROLEID
+        GROUP BY t.id
+        having 1=1
+        <if test=" entity.roleId != null and entity.roleId !='' ">
+            and roleids like concat('%',#{entity.roleId},'%')
+        </if>
+
+    </select>
+
+</mapper>

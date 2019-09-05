@@ -1,0 +1,1149 @@
+
+<link rel="stylesheet" href="tree/css/metroStyle/metroStyle.css">
+<script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+<script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+<script src="tree/js/jquery-1.4.4.min.js"></script>
+<script src="tree/js/jquery.ztree.all.min.js"></script>
+<style>
+    #nav span,.right span{display: none;}
+    #nav a{display: inline-block;width: 40px;height: 56px;text-align: center;border: 1px solid #f5f5f5;}
+    #nav a:nth-of-type(3){display: inline-block;width: 220px;height: 52px; text-align: left;padding-left: 20px;border-top: 2px solid #000;font-weight: bold;}
+    .right{display: inline-block;position: absolute;top: 0;right: 0;}
+    .layui-breadcrumb a{color: #000!important;}
+    #nav span,
+    .right span {
+        display: none;
+    }
+
+    #nav a {
+        display: inline-block;
+        width: 40px;
+        height: 56px;
+        text-align: center;
+        border: 1px solid #f5f5f5;
+    }
+
+    #nav a:nth-of-type(3) {
+        display: inline-block;
+        width: 220px;
+        height: 52px;
+        text-align: left;
+        padding-left: 20px;
+        border-top: 2px solid #000;
+        font-weight: bold;
+    }
+
+    .right {
+        display: inline-block;
+        position: absolute;
+        top: 0;
+        right: 0;
+    }
+
+    .layui-breadcrumb a {
+        color: #000 !important;
+    }
+
+    .node_name {
+        font-size: 18px;
+        color: rgb(102, 102, 102);
+        margin-top: -5px;
+        display: inline-block;
+    }
+
+    .ztree li {
+        margin-top: 10px;
+        padding: 0;
+    }
+
+    .ztree li span.button.noline_open {
+        background-position: -110px -88px;
+    }
+    .ztree li span.button.noline_close {
+        background-position: -130px -88px;
+    }
+
+    .layui-table td {
+        padding: 0;
+    }
+
+    .imgBox {
+        margin-top: 20px;
+        margin-left: 30px;
+    }
+
+    .imgBox li {
+        width: 230px;
+        height: 180px;
+        background: url(./img/transparent.gif) no-repeat;
+        background-size: 100% 100%;
+        float: left;
+        margin-right: 25px;
+        margin-bottom: 20px;
+    }
+
+    .imgBox li .img {
+        width: 230px;
+        height: 150px;
+        background: url(./img/u6147.png) no-repeat;
+        background-size: 100% 100%;
+        position: relative;
+    }
+    .imgBox1 li{
+        width: 100%;
+        height: 115px;
+        border-bottom: 1px solid #f5f5f5;
+        position: relative;
+    }
+    .imgBox1 li .right{
+        width: 140px;
+        height: 70px;
+        background: url(./img/u6147.png) no-repeat;
+        background-size: 100% 100%;
+        position: absolute;
+        top:10px;
+        left:15px;
+    }
+    .imgBox1 li .content{
+        height: 70px;
+        position: absolute;
+        top:10px;
+        left:175px;
+    }
+    .layui-table tbody tr:hover{
+        background: #fff;
+    }
+    td .layui-input, .layui-select, .layui-textarea{
+        border: none;
+    }
+    .inner1 li{
+        float: left;
+        margin-left: 15px;
+    }
+    .inner1 li:last-child{
+        width: 175px;
+        height: 197px;
+        background: #f6f6f6;
+        margin-top: 10px;
+        position: relative;
+    }
+    .inner1 li:last-child img{
+        position: absolute;
+        top:40px;
+        left: 30px;
+    }
+    #form2 .layui-form-select .layui-edge,#form3 .layui-form-select .layui-edge {
+        position: absolute;
+        right: 10px;
+        top: 75%;}
+    .box{width: 1050px;height: 520px;margin-left: 95px;background: #fff;padding: 10px 0 0 10px; border-radius: 2px;}
+    .layui-layer-hui .layui-layer-content{padding:0 25px;}
+    .prev{
+        width: 60px;
+        height: 60px;
+        border-radius: 30px;
+        background: #ccc;
+        position: absolute;
+        line-height: 60px;
+        top:250px;
+        left: 30px;
+    }
+    .next{
+        width: 60px;
+        height: 60px;
+        border-radius: 30px;
+        background: #ccc;
+        position: absolute;
+        line-height: 60px;
+        top:250px;
+        right: 30px;
+    }
+    .image{
+        width:795px;
+        height:464px;
+        background: url(./img/u6147.png) no-repeat;
+        background-size: 100% 100%;
+    }
+    .left{
+        float: left;
+        margin-right: 20px;
+    }
+    .rights{
+        float: left;
+    }
+    .layui-layer-hui{
+        background: rgba(0,0,0,0);
+    }
+    .node_name{
+        font-size: 14px;
+    }
+    .videos{ display:none;width:795px;
+        height:464px;
+        background: url(./img/u6147.png) no-repeat;
+        background-size: 100% 100%;
+        position: absolute;top:0;left:0 }
+</style>
+
+
+
+
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space12">
+        <div class="layui-col-md3" style="width: 312px;">
+            <div class="layui-card" style="height: 800px; ">
+                <div class="layui-card-header">视频管理</div>
+                <div class="layui-card-body">
+                    <ul id="treeDemo" class="ztree"></ul>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md9" style="position: relative;width: 1350px;">
+
+            <div class="layui-card h100" id='list1' style="padding-top: 10px;">
+                <form class="layui-form" style="display: inline-block;margin-top: 10px;">
+                    <div class="layui-form-item" style="display: inline-block;">
+                        <label class="layui-form-label"
+                               style="padding:  9px 0px 9px 15px;width:60px;text-align:center">名称</label>
+                        <div class="layui-input-block" style="width: 180px;margin-left: 75px;">
+                            <input type="text" class="layui-input" placeholder="请输入">
+                        </div>
+                    </div>
+                    <div class="layui-form-item" style="display: inline-block;">
+                        <label class="layui-form-label"
+                               style="padding: 9px 0 9px 15px;width:60px;text-align:center">创建者</label>
+                        <div class="layui-input-block" style="width: 180px;margin-left: 85px;">
+                            <input type="text" class="layui-input" placeholder="请输入">
+                        </div>
+                    </div>
+                    <div class="layui-form-item" style="display: inline-block;margin-left: 10px;">
+                        <label class="layui-form-label"
+                               style="padding: 9px 0 9px 15px;width:60px;text-align:center">上传时间</label>
+                        <div class="layui-input-block" style="width: 290px;margin-left: 85px;">
+                            <input type="text" class="layui-input"
+                                   style="width: 135px;display: inline-block;margin-right: 5px;">~<input
+                                type="text" class="layui-input"
+                                style="width: 135px;display: inline-block;margin-left: 5px;">
+                        </div>
+                    </div>
+                </form>
+                <div class="layui-btn-container"
+                     style="display: inline-block;width: 400px;margin-left: 10px;">
+                    <button class="layui-btn"><i class="layui-icon layui-icon-search"></i></button>
+                    <button class="layui-btn" style="margin-left: 220px;" data-method="upload">视频上传</button>
+                </div>
+                <div class="layui-form">
+                    <table class="layui-table">
+                        <colgroup>
+                            <col width="80">
+                            <col width="100">
+                            <col width="100">
+                            <col width="100">
+                            <col width="120">
+                            <col width="30" align="center">
+                            <col width="30" align="center">
+                        </colgroup>
+                        <tbody>
+                        <tr>
+                            <td>
+                                <div class="layui-input-block" style="margin-left: 0;">
+                                    <select name="" id="">
+                                        <option value="0" selected>默认排序</option>
+                                        <option value="1">上传时间排序</option>
+                                        <option value="2">文件大小排序</option>
+                                    </select>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="layui-input-block" style="margin-left: 0;">
+                                    <select name="form" id="" lay-verify="required">
+                                        <option value="" disabled selected hidden>版式</option>
+                                        <option value="1">全部</option>
+                                        <option value="2">横图</option>
+                                        <option value="3">竖图</option>
+                                    </select>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="layui-input-block" style="margin-left: 0;">
+                                    <select name="form" id="" lay-verify="required">
+                                        <option value="" disabled selected hidden>格式</option>
+                                        <option value="1">全部</option>
+                                        <option value="2">jpg</option>
+                                        <option value="3">png</option>
+                                        <option value="4">tif</option>
+                                        <option value="5">gif</option>
+                                        <option value="6">bmp</option>
+                                    </select>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="layui-input-block" style="margin-left: 0;">
+                                    <select name="form" id="" lay-verify="required">
+                                        <option value="" disabled selected hidden>版权归属</option>
+                                        <option value="1">全部</option>
+                                        <option value="2">自主</option>
+                                        <option value="3">经授权</option>
+                                        <option value="4">其他</option>
+                                    </select>
+                                </div>
+                            </td>
+                            <td></td>
+                            <td class="img1">
+                                <img src="./img/u6616_mouseOver.png" alt="" srcset="" style="margin-left: 10px;" id='change1'>
+                            </td>
+                            <td class="img1">
+                                <img src="./img/u6611.png" alt="" srcset="" style="margin-left: 10px;" id='change2' >
+                            </td>
+                        </tr>
+
+                        </tbody>
+                    </table>
+                    <ul class="imgBox">
+                        <li>
+                            <div class="img" data-method="preview">
+                                <div class="layui-btn-container" style="position: absolute;right:0px;top:5px;">
+                                    <button class="layui-btn layui-btn-sm"
+                                            style="background: #000;border-radius: 2px">下载</button>
+                                    <button class="layui-btn layui-btn-sm"
+                                            style="background: #000;border-radius: 2px" data-method="delete"><i
+                                            class="layui-icon layui-icon-delete"></i></button>
+                                </div>
+                            </div>
+                            <div class="text" style="margin-top:10px;height: 20px;width: 240px;">
+                                <span style="color: #0000ff">图片</span>&nbsp;|&nbsp;<span>banner新闻.jpg</span>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="img" data-method="preview">
+                                <div class="layui-btn-container" style="position: absolute;right:0px;top:5px;">
+                                    <button class="layui-btn layui-btn-sm"
+                                            style="background: #000;border-radius: 2px">下载</button>
+                                    <button class="layui-btn layui-btn-sm"
+                                            style="background: #000;border-radius: 2px" data-method="delete"><i
+                                            class="layui-icon layui-icon-delete"></i></button>
+                                </div>
+                            </div>
+                            <div class="text" style="margin-top:10px;height: 20px;width: 240px;">
+                                <span style="color: #0000ff">图片</span>&nbsp;|&nbsp;<span>banner新闻.jpg</span>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="img" data-method="preview">
+                                <div class="layui-btn-container" style="position: absolute;right:0px;top:5px;">
+                                    <button class="layui-btn layui-btn-sm"
+                                            style="background: #000;border-radius: 2px">下载</button>
+                                    <button class="layui-btn layui-btn-sm"
+                                            style="background: #000;border-radius: 2px" data-method="delete"><i
+                                            class="layui-icon layui-icon-delete"></i></button>
+                                </div>
+                            </div>
+                            <div class="text" style="margin-top:10px;height: 20px;width: 240px;">
+                                <span style="color: #0000ff">图片</span>&nbsp;|&nbsp;<span>banner新闻.jpg</span>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="img" data-method="preview">
+                                <div class="layui-btn-container" style="position: absolute;right:0px;top:5px;">
+                                    <button class="layui-btn layui-btn-sm"
+                                            style="background: #000;border-radius: 2px">下载</button>
+                                    <button class="layui-btn layui-btn-sm"
+                                            style="background: #000;border-radius: 2px" data-method="delete"><i
+                                            class="layui-icon layui-icon-delete"></i></button>
+                                </div>
+                            </div>
+                            <div class="text" style="margin-top:10px;height: 20px;width: 240px;">
+                                <span style="color: #0000ff">图片</span>&nbsp;|&nbsp;<span>banner新闻.jpg</span>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="img" data-method="preview">
+                                <div class="layui-btn-container" style="position: absolute;right:0px;top:5px;">
+                                    <button class="layui-btn layui-btn-sm"
+                                            style="background: #000;border-radius: 2px">下载</button>
+                                    <button class="layui-btn layui-btn-sm"
+                                            style="background: #000;border-radius: 2px" data-method="delete"><i
+                                            class="layui-icon layui-icon-delete"></i></button>
+                                </div>
+                            </div>
+                            <div class="text" style="margin-top:10px;height: 20px;width: 240px;">
+                                <span style="color: #0000ff">图片</span>&nbsp;|&nbsp;<span>banner新闻.jpg</span>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="img" data-method="preview">
+                                <div class="layui-btn-container" style="position: absolute;right:0px;top:5px;">
+                                    <button class="layui-btn layui-btn-sm"
+                                            style="background: #000;border-radius: 2px">下载</button>
+                                    <button class="layui-btn layui-btn-sm"
+                                            style="background: #000;border-radius: 2px" data-method="delete"><i
+                                            class="layui-icon layui-icon-delete"></i></button>
+                                </div>
+                            </div>
+                            <div class="text" style="margin-top:10px;height: 20px;width: 240px;">
+                                <span style="color: #0000ff">图片</span>&nbsp;|&nbsp;<span>banner新闻.jpg</span>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="img" data-method="preview">
+                                <div class="layui-btn-container" style="position: absolute;right:0px;top:5px;">
+                                    <button class="layui-btn layui-btn-sm"
+                                            style="background: #000;border-radius: 2px">下载</button>
+                                    <button class="layui-btn layui-btn-sm"
+                                            style="background: #000;border-radius: 2px" data-method="delete"><i
+                                            class="layui-icon layui-icon-delete"></i></button>
+                                </div>
+                            </div>
+                            <div class="text" style="margin-top:10px;height: 20px;width: 240px;">
+                                <span style="color: #0000ff">图片</span>&nbsp;|&nbsp;<span>banner新闻.jpg</span>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="img" data-method="preview">
+                                <div class="layui-btn-container" style="position: absolute;right:0px;top:5px;">
+                                    <button class="layui-btn layui-btn-sm"
+                                            style="background: #000;border-radius: 2px">下载</button>
+                                    <button class="layui-btn layui-btn-sm"
+                                            style="background: #000;border-radius: 2px" data-method="delete"><i
+                                            class="layui-icon layui-icon-delete"></i></button>
+                                </div>
+                            </div>
+                            <div class="text" style="margin-top:10px;height: 20px;width: 240px;">
+                                <span style="color: #0000ff">图片</span>&nbsp;|&nbsp;<span>banner新闻.jpg</span>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="img" data-method="preview">
+                                <div class="layui-btn-container" style="position: absolute;right:0px;top:5px;">
+                                    <button class="layui-btn layui-btn-sm"
+                                            style="background: #000;border-radius: 2px">下载</button>
+                                    <button class="layui-btn layui-btn-sm"
+                                            style="background: #000;border-radius: 2px" data-method="delete"><i
+                                            class="layui-icon layui-icon-delete"></i></button>
+                                </div>
+                            </div>
+                            <div class="text" style="margin-top:10px;height: 20px;width: 240px;">
+                                <span style="color: #0000ff">图片</span>&nbsp;|&nbsp;<span>banner新闻.jpg</span>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="img" data-method="preview">
+                                <div class="layui-btn-container" style="position: absolute;right:0px;top:5px;">
+                                    <button class="layui-btn layui-btn-sm"
+                                            style="background: #000;border-radius: 2px">下载</button>
+                                    <button class="layui-btn layui-btn-sm"
+                                            style="background: #000;border-radius: 2px" data-method="delete"><i
+                                            class="layui-icon layui-icon-delete"></i></button>
+                                </div>
+                            </div>
+                            <div class="text" style="margin-top:10px;height: 20px;width: 240px;">
+                                <span style="color: #0000ff">图片</span>&nbsp;|&nbsp;<span>banner新闻.jpg</span>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="img" data-method="preview">
+                                <div class="layui-btn-container" style="position: absolute;right:0px;top:5px;">
+                                    <button class="layui-btn layui-btn-sm"
+                                            style="background: #000;border-radius: 2px">下载</button>
+                                    <button class="layui-btn layui-btn-sm"
+                                            style="background: #000;border-radius: 2px" data-method="delete"><i
+                                            class="layui-icon layui-icon-delete"></i></button>
+                                </div>
+                            </div>
+                            <div class="text" style="margin-top:10px;height: 20px;width: 240px;">
+                                <span style="color: #0000ff">图片</span>&nbsp;|&nbsp;<span>banner新闻.jpg</span>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="img" data-method="preview">
+                                <div class="layui-btn-container" style="position: absolute;right:0px;top:5px;">
+                                    <button class="layui-btn layui-btn-sm"
+                                            style="background: #000;border-radius: 2px">下载</button>
+                                    <button class="layui-btn layui-btn-sm"
+                                            style="background: #000;border-radius: 2px" data-method="delete"><i
+                                            class="layui-icon layui-icon-delete"></i></button>
+                                </div>
+                            </div>
+                            <div class="text" style="margin-top:10px;height: 20px;width: 240px;">
+                                <span style="color: #0000ff">图片</span>&nbsp;|&nbsp;<span>banner新闻.jpg</span>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="img" data-method="preview">
+                                <div class="layui-btn-container" style="position: absolute;right:0px;top:5px;">
+                                    <button class="layui-btn layui-btn-sm"
+                                            style="background: #000;border-radius: 2px">下载</button>
+                                    <button class="layui-btn layui-btn-sm"
+                                            style="background: #000;border-radius: 2px" data-method="delete"><i
+                                            class="layui-icon layui-icon-delete"></i></button>
+                                </div>
+                            </div>
+                            <div class="text" style="margin-top:10px;height: 20px;width: 240px;">
+                                <span style="color: #0000ff">图片</span>&nbsp;|&nbsp;<span>banner新闻.jpg</span>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="img" data-method="preview">
+                                <div class="layui-btn-container" style="position: absolute;right:0px;top:5px;">
+                                    <button class="layui-btn layui-btn-sm"
+                                            style="background: #000;border-radius: 2px">下载</button>
+                                    <button class="layui-btn layui-btn-sm"
+                                            style="background: #000;border-radius: 2px" data-method="delete"><i
+                                            class="layui-icon layui-icon-delete"></i></button>
+                                </div>
+                            </div>
+                            <div class="text" style="margin-top:10px;height: 20px;width: 240px;">
+                                <span style="color: #0000ff">图片</span>&nbsp;|&nbsp;<span>banner新闻.jpg</span>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="img" data-method="preview">
+                                <div class="layui-btn-container" style="position: absolute;right:0px;top:5px;">
+                                    <button class="layui-btn layui-btn-sm"
+                                            style="background: #000;border-radius: 2px">下载</button>
+                                    <button class="layui-btn layui-btn-sm"
+                                            style="background: #000;border-radius: 2px" data-method="delete"><i
+                                            class="layui-icon layui-icon-delete"></i></button>
+                                </div>
+                            </div>
+                            <div class="text" style="margin-top:10px;height: 20px;width: 240px;">
+                                <span style="color: #0000ff">图片</span>&nbsp;|&nbsp;<span>banner新闻.jpg</span>
+                            </div>
+                        </li>
+
+                    </ul>
+
+                    <ul class="imgBox1" style="display: none">
+                        <li>
+                            <div class="right"></div>
+                            <div class="content">
+                                <p> banner新闻</p>
+                                <p style="margin-top: 15px;">
+                                    <span>格式：JPG</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>大小：45.7kB</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>上传时间：2019年7月10日</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>路径：首页 - banner新闻</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>来源：版权来源</span>
+                                </p>
+                            </div>
+                            <div class="layui-btn-container" style="position: absolute;right:20px;top:30px;">
+                                <div class="layui-btn">下载</div>
+                                <div class="layui-btn layui-btn-danger" data-method="delete">删除</div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="right"></div>
+                            <div class="content">
+                                <p> banner新闻</p>
+                                <p style="margin-top: 15px;">
+                                    <span>格式：JPG</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>大小：45.7kB</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>上传时间：2019年7月10日</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>路径：首页 - banner新闻</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>来源：版权来源</span>
+                                </p>
+                            </div>
+                            <div class="layui-btn-container" style="position: absolute;right:20px;top:30px;">
+                                <div class="layui-btn">下载</div>
+                                <div class="layui-btn layui-btn-danger" data-method="delete">删除</div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="right"></div>
+                            <div class="content">
+                                <p> banner新闻</p>
+                                <p style="margin-top: 15px;">
+                                    <span>格式：JPG</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>大小：45.7kB</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>上传时间：2019年7月10日</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>路径：首页 - banner新闻</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>来源：版权来源</span>
+                                </p>
+                            </div>
+                            <div class="layui-btn-container" style="position: absolute;right:20px;top:30px;">
+                                <div class="layui-btn">下载</div>
+                                <div class="layui-btn layui-btn-danger" data-method="delete">删除</div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="right"></div>
+                            <div class="content">
+                                <p> banner新闻</p>
+                                <p style="margin-top: 15px;">
+                                    <span>格式：JPG</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>大小：45.7kB</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>上传时间：2019年7月10日</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>路径：首页 - banner新闻</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>来源：版权来源</span>
+                                </p>
+                            </div>
+                            <div class="layui-btn-container" style="position: absolute;right:20px;top:30px;">
+                                <div class="layui-btn">下载</div>
+                                <div class="layui-btn layui-btn-danger" data-method="delete">删除</div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="right"></div>
+                            <div class="content">
+                                <p> banner新闻</p>
+                                <p style="margin-top: 15px;">
+                                    <span>格式：JPG</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>大小：45.7kB</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>上传时间：2019年7月10日</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>路径：首页 - banner新闻</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>来源：版权来源</span>
+                                </p>
+                            </div>
+                            <div class="layui-btn-container" style="position: absolute;right:20px;top:30px;">
+                                <div class="layui-btn">下载</div>
+                                <div class="layui-btn layui-btn-danger" data-method="delete">删除</div>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <div id="test1" style="margin: 10px 0 0 30px;"></div>
+                </div>
+            </div>
+            <div class="layui-card h100" id='list2' style="display: none;height: 800px">
+                <div class="layui-card-header"><p style="color: #0000ff;cursor: pointer;" onclick='returnBack()'>返回上一级</p></div>
+                <div class="layui-card-body">
+                    <div class='inner' style="width: 695px;height:234px;margin: 180px auto">
+                        <button class="layui-btn layui-btn-normal layui-btn-lg" style="width: 265px;margin-left:215px;" onclick="upload()"><i class="layui-icon layui-icon-upload"></i>点击上传</button>
+                        <p style="margin-top:20px; color:#ccc;text-align: center;">--------------------------------------&nbsp;&nbsp;或&nbsp;&nbsp;--------------------------------------</p>
+                        <p style="margin-top:20px; color:#0000ff;text-align: center;font-size: 20px;">从电脑里拖拽视频至此上传</p>
+                        <p style="margin-top:20px; color:#ccc;text-align: center;color:#ccc;">支持MP4、AVI、MPG、FLV等格式（批量上传每次上限50个）</p>
+                    </div>
+                </div>
+
+            </div>
+            <div class="layui-card h100" id='list3' style="display: none;height: 800px">
+                <div class="layui-card-header"><p style="color: #0000ff;cursor: pointer;" onclick='returnBack1()'>返回上一级</p></div>
+                <div class="layui-card-body">
+
+                    <div class="inner1">
+                        <ul  style="margin-top: 15px; height: 650px;border-bottom: 1px solid #ccc;">
+                            <li>
+                                <img src="./img/u6645.png" alt="">
+                            </li>
+                            <li>
+                                <img src="./img/u6645.png" alt="">
+                            </li>
+                            <li>
+                                <img src="./img/u6645.png" alt="">
+                            </li>
+                            <li>
+                                <img src="./img/u6639.png" alt="" srcset="">
+                            </li>
+                        </ul>
+                        <div class="edit" style="position: relative">
+                            <button class="layui-btn layui-btn-normal layui-btn-lg" style="width: 265px;margin-top: 10px;display: inline-block;" onclick="edit()"><i class="layui-icon layui-icon-upload"></i>编辑视频</button>
+                            <span style="margin-left: 15px;color:#666;display: inline-block;height: 44px;position: absolute;top:10px;line-height: 44px;">共3条视频（上传过程中请不要删除原始视频）</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-card h100" id='list4' style="display: none;height: 800px">
+                <div class="layui-card-header"><p style="color: #0000ff;cursor: pointer;" onclick='returnBack2()'>返回上一级</p></div>
+                <div class="layui-card-body">
+                    <div class="inner2">
+                        <h2 style="color: #169BD5;margin-left: 500px;margin-top:20px;font-weight:bold;display: inline-block;">添加统一信息</h2>
+                        <span style="float: right;margin-top:20px;font-size: 16px;" onclick="add()">单独添加信息<i class="layui-icon layui-icon-right"></i></span>
+                        <form class="layui-form" style="margin:100px 0 0 200px;width:760px;" id='form2'>
+                            <div class="layui-form-item" style="display: inline-block">
+                                <label class="layui-form-label" style="padding: 9px 0;text-align: left;">编辑人员</label>
+                                <div class="layui-input-block" style="margin-left: 0;width:366px;">
+                                    <input type="text" class="layui-input" placeholder="请输入内容">
+                                </div>
+                            </div>
+                            <div class="layui-form-item" style="display: inline-block;margin-left: 20px;">
+                                <label class="layui-form-label" style="padding: 9px 0;text-align: left;">*内容类型</label>
+                                <div class="layui-input-block" style="margin-left: 0;width:366px;">
+                                    <input type="text" class="layui-input" placeholder="请输入内容">
+                                </div>
+                            </div>
+                            <div class="layui-form-item" style="display: inline-block">
+                                <label class="layui-form-label" style="padding: 9px 0;text-align: left;">*版权归属</label>
+                                <div class="layui-input-block" style="margin-left: 0;width:366px;">
+                                    <select name="" id="">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="layui-form-item" style="display: inline-block;margin-left: 20px;">
+                                <label class="layui-form-label" style="padding: 9px 0;text-align: left;">来源</label>
+                                <div class="layui-input-block" style="margin-left: 0;width:366px;">
+                                    <input type="text" class="layui-input" placeholder="请输入内容">
+                                </div>
+                            </div>
+                            <div class="layui-form-item" style="display: inline-block">
+                                <label class="layui-form-label" style="padding: 9px 0;text-align: left;">*描述</label>
+                                <div class="layui-input-block" style="margin-left: 0;width:755px;">
+                                    <textarea class="layui-textarea" style="border: 1px solid #ccc"></textarea>
+                                </div>
+                            </div>
+                        </form>
+                        <button class="layui-btn layui-btn-normal layui-btn-lg" style="width: 310px;margin:80px 0 0 400px;" onclick="add()">提交</button>
+                    </div>
+
+                </div>
+            </div>
+            <div class="layui-card h100" id='list5' style="display: none;height: 800px">
+                <div class="layui-card-header"><p style="color: #0000ff;cursor: pointer;" onclick='returnBack3()'>返回上一级</p></div>
+                <div class="layui-card-body">
+                    <div class="inner3">
+                        <h3 style="color: #169BD5;margin-left: 500px;margin-top:20px;font-weight:bold;display: inline-block;">单独添加信息</h3>
+                        <div class="infoBox" style="width: 420px;height:610px;border-left:1px solid #ccc;float:right;margin-top: 60px;overflow: auto;">
+                            <form class="layui-form" id='form3'>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label" style="text-align: left;">视频名称</label>
+                                    <div class="layui-input-block" style="margin-left: 15px;width:380px;">
+                                        <input type="text" class="layui-input" placeholder="请输入内容">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label" style="text-align: left;">*版权归属</label>
+                                    <div class="layui-input-block" style="margin-left:15px;width:380px;">
+                                        <select name="" id="">
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label" style="text-align: left;">来源</label>
+                                    <div class="layui-input-block" style="margin-left: 15px;width:380px;">
+                                        <input type="text" class="layui-input" placeholder="请输入内容">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label" style="text-align: left;">*描述</label>
+                                    <div class="layui-input-block" style="margin-left: 15px;width:380px;">
+                                        <textarea class="layui-textarea" style="border: 1px solid #ccc"></textarea>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label" style="text-align: left;">文件夹路径</label>
+                                    <div class="layui-input-block" style="margin-left: 15px;width:380px;">
+                                        <input type="text" class="layui-input" placeholder="请输入内容">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label" style="text-align: left;">格式</label>
+                                    <div class="layui-input-block" style="margin-left:15px;width:380px;">
+                                        <select name="" id="">
+                                            <option value="0" selected>MP4</option>
+                                            <option value="1">AVI</option>
+                                            <option value="2">MOV</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label" style="text-align: left;">文件大小</label>
+                                    <div class="layui-input-block" style="margin-left: 15px;width:380px;">
+                                        <input type="text" class="layui-input" value="52.82MB">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label" style="text-align: left;">文件夹路径</label>
+                                    <div class="layui-input-block" style="margin-left: 15px;width:380px;">
+                                        <input type="text" class="layui-input" value="16:9">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label" style="text-align: left;">分辨率</label>
+                                    <div class="layui-input-block" style="margin-left: 15px;width:380px;">
+                                        <input type="text" class="layui-input" value="1080p">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label" style="text-align: left;">版式</label>
+                                    <div class="layui-input-block" style="margin-left:15px;width:380px;">
+                                        <select name="" id="">
+                                            <option value="0" selected>P横版</option>
+                                            <option value="1">竖版</option>
+                                            <option value="2">方版</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </form>
+                            <button class="layui-btn layui-btn-normal" style="width: 310px;margin:20px 0 0 50px;">确定</button>
+                        </div>
+                        <div class="imgIcon" style="width:379px;height:466px;margin: 50px 0 0 150px;position: relative;">
+                            <!-- <img src="./img/u6733.jpg" alt="" srcset="" style="width: 100%;height:100%;"> -->
+                            <img src="./img/u7603.png" alt="" srcset="" style="position: absolute;width: 60px;height: 60px;;position: absolute;top:50%;left:50%;margin: -30px 0 0 -30px;">
+                        </div>
+                        <div class="layui-btn-container" style="margin: 20px 150px;">
+                            <button class="layui-btn layui-btn-normal" style="margin-right: 115px;"><i class="layui-icon layui-icon-left"></i></button>
+                            <button class="layui-btn layui-btn-normal" style="margin-left: 150px;"><i class="layui-icon layui-icon-right"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-card h100" id='list6' style="display: none;height: 800px">
+                <div class="layui-card-header"><p style="color: #0000ff;cursor: pointer;" onclick='returnBack4()'>返回上一级</p></div>
+                <div class="layui-card-body">
+
+                    <div class='inner4' >
+                        <h1 style="margin-top:20px;font-weight:bold;color:#000">公告通知</h1>
+                        <div class='box' style="margin-top: 10px;margin-left: 0">
+                            <div class='left' style="width: 800px;height:500px;background: #f5f5f5;padding: 20px;">
+                                <div class='image' style="height: 484px;position:relative">
+                                    <div style="width: 60px;height:60px;position:absolute;top:50%;left:50%;margin:-30px 0 0 -30px;">
+                                        <img src="./img/u7603.png" alt="" style="width: 100%;height:100%;">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class='rights'>
+                                <div class='layui-btn-container'>
+                                    <button class='layui-btn layui-btn-normal'>立即下载</button>
+                                    <button class='layui-btn layui-btn-normal'><i class='layui-icon layui-icon-delete'></i></button>
+                                </div>
+                                <p style='margin-top:20px; color:#000;text-align:left;font-size:18px'>名称：banner新闻</p>
+                                <p style='margin-top:10px; color:#000;text-align:left;font-size:18px'>大小：47.29MB</p>
+                                <p style='margin-top:10px; color:#000;text-align:left;font-size:18px'>格式：MP4</p>
+                                <p style='margin-top:10px; color:#000;text-align:left;font-size:18px'>上传时间：2019.04.26</p>
+                                <p style='margin-top:10px; color:#000;text-align:left;font-size:18px'>路径：</p>
+                                <p style='margin-top:10px; color:#000;text-align:left;font-size:18px'>来源：</p>
+                                <p style='margin-top:10px; color:#000;text-align:left;font-size:18px'>版权所属：</p>
+                                <button class='layui-btn layui-btn-danger' style='margin-top:60px;' onclick='update()'>修改</button>
+                            </div>
+                        </div>
+                        <p style='width:795px;margin:20px 0 0 10px;text-align:left;'>描述，此视频...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-card h100" id='list7' style="display: none;height: 800px">
+                <div class="layui-card-header"><p style="color: #0000ff;cursor: pointer;" onclick='returnBack5()'>返回上一级</p></div>
+                <div class="layui-card-body">
+                    <div class="inner5" >
+                        <div class='left' style="width: 700px;height:500px;background: #f5f5f5;padding: 20px;margin-top: 40px;display: inline-block">
+                            <div class='image' style="height: 484px;width: 695px;position: relative;">
+                                <div style="width: 60px;height:60px;position:absolute;top:50%;left:50%;margin:-30px 0 0 -30px;">
+                                    <img src="./img/u7603.png" alt="" style="width: 100%;height:100%;">
+                                </div></div>
+                        </div>
+                        <div class="infoBox" style="width: 420px;height:610px;border-left:1px solid #ccc;overflow: auto;position: absolute;top:40px;right:0;">
+                            <form class="layui-form" id='form3'>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label" style="text-align: left;">视频名称</label>
+                                    <div class="layui-input-block" style="margin-left: 15px;width:380px;">
+                                        <input type="text" class="layui-input" placeholder="请输入内容">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label" style="text-align: left;">*版权归属</label>
+                                    <div class="layui-input-block" style="margin-left:15px;width:380px;">
+                                        <select name="" id="">
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label" style="text-align: left;">来源</label>
+                                    <div class="layui-input-block" style="margin-left: 15px;width:380px;">
+                                        <input type="text" class="layui-input" placeholder="请输入内容">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label" style="text-align: left;">*描述</label>
+                                    <div class="layui-input-block" style="margin-left: 15px;width:380px;">
+                                        <textarea class="layui-textarea" style="border: 1px solid #ccc"></textarea>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label" style="text-align: left;">文件夹路径</label>
+                                    <div class="layui-input-block" style="margin-left: 15px;width:380px;">
+                                        <input type="text" class="layui-input" placeholder="请输入内容">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label" style="text-align: left;">格式</label>
+                                    <div class="layui-input-block" style="margin-left:15px;width:380px;">
+                                        <select name="" id="">
+                                            <option value="0" selected>MP4</option>
+                                            <option value="1">AVI</option>
+                                            <option value="2">MOV</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label" style="text-align: left;">文件大小</label>
+                                    <div class="layui-input-block" style="margin-left: 15px;width:380px;">
+                                        <input type="text" class="layui-input" value="52.82MB">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label" style="text-align: left;">文件夹路径</label>
+                                    <div class="layui-input-block" style="margin-left: 15px;width:380px;">
+                                        <input type="text" class="layui-input" value="16:9">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label" style="text-align: left;">分辨率</label>
+                                    <div class="layui-input-block" style="margin-left: 15px;width:380px;">
+                                        <input type="text" class="layui-input" value="1080p">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label" style="text-align: left;">版式</label>
+                                    <div class="layui-input-block" style="margin-left:15px;width:380px;">
+                                        <select name="" id="">
+                                            <option value="0" selected>横版</option>
+                                            <option value="1">竖版</option>
+                                            <option value="2">方版</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </form>
+                            <button class="layui-btn layui-btn-normal" style="width: 310px;margin:20px 0 0 50px;">确定</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var zNodes;
+    function getTreeData() {
+        ajax("/manage/company/getCompanyTree","get",{}).then(data=>{
+            console.log(data);
+        var nodes = data.obj;
+        zTreeObj = $.fn.zTree.init($("#treeDemo"), settingss, data.obj); //初始化树
+        zTreeObj.expandAll(true);    //true 节点全部展开、false节点收缩
+    })
+    }
+    var settingss = {
+        data: {
+            simpleData: {
+                enable: true,  //true 、 false 分别表示 使用 、 不使用 简单数据模式
+                idKey: "id",  //节点数据中保存唯一标识的属性名称
+                pIdKey: "parentId",    //节点数据中保存其父节点唯一标识的属性名称
+                rootPId: -1  //用于修正根节点父节点数据，即 pIdKey 指定的属性值
+            },
+            key: {
+                name: "name"  //zTree 节点数据保存节点名称的属性名称  默认值："name"
+            }
+        },
+        view: {showLine: false, showIcon: true}
+    };
+
+</script>
+<script>
+    getTreeData();
+    function add(){
+        $('#list4').hide();
+        $('#list5').show();
+    }
+    function upload(){
+        $('#list2').hide();
+        $('#list3').show();
+    }
+    function edit(){
+        $('#list3').hide();
+        $('#list4').show();
+    }
+    function returnBack(){
+        $("#list1").show();
+        $('#list2').hide();
+    }
+    function returnBack1(){
+        $("#list2").show();
+        $('#list3').hide();
+    }
+    function returnBack2(){
+        $("#list3").show();
+        $('#list4').hide();
+    }
+    function returnBack3(){
+        $("#list4").show();
+        $('#list5').hide();
+    }
+    function returnBack4(){
+        $("#list1").show();
+        $('#list6').hide();
+    }
+    function returnBack5(){
+        $("#list6").show();
+        $('#list7').hide();
+    }
+    $("#change2").hover(function(){
+        $(this).attr('src','./img/u6611_mouseOver.png');
+    },function(){
+        $(this).attr('src','./img/u6611.png');
+    })
+
+
+    $('.img1').click(function(){
+        if($(this).find('img').attr('id') == 'change2'){
+            $(this).find('img').attr('src','./img/u6611_mouseOver.png');
+            $('#change1').attr('src','./img/u6616.png')
+            $(".imgBox").hide()
+            $(".imgBox1").show()
+        }else if($(this).find('img').attr('id') == 'change1'){
+            $(this).find('img').attr('src','./img/u6616_mouseOver.png');
+            $('#change2').attr('src','./img/u6611.png')
+            $(".imgBox").show()
+            $(".imgBox1").hide()
+        }
+    })
+
+    layui.use('laypage', function(){
+        var laypage = layui.laypage;
+
+        //执行一个laypage实例
+        laypage.render({
+            elem: 'test1'
+            ,count: 100
+            ,layout: ['count', 'prev', 'page', 'next', 'limit', 'refresh', 'skip']
+        });
+    });
+    layui.use('form', function () { //声明使用layUI的form
+        var form = layui.form;
+        form.render(); //刷新所有渲染效果，也可以单独熟悉某个效果
+        //监听提交
+        form.on('submit(formDemo)', function (data) {
+            layer.msg(JSON.stringify(data.field));
+            return false;
+        });
+    });
+    layui.use('layer', function(){ //独立版的layer无需执行这一句
+        var  layer = layui.layer; //独立版的layer无需执行这一句
+        //触发事件
+        var active = {
+            preview:function(){
+                layer.msg("<div id='form9'></div>", {
+                    time:0,
+                    closeBtn:2,
+                    shade: 0.3,
+                    area: ['1300px', '530px']
+                });
+                layui.laytpl($("#detail").html()).render({}, function(html){
+                    $("#form9").html(html);
+                    layui.form.render();
+                })
+                $('.image').click(function(){ //这个视频被点击后执行
+                    var img = $(this).attr('vpath');//获取视频预览图
+                    var video = $(this).attr('ipath');//获取视频路径
+                    $('.videos').html("<video id=\"video\" poster='"+img+"' style='width: 795px;height:464px;' src='"+video+"' preload=\"auto\" controlsList=\"nodownload\" controls=\"controls\" autoplay=\"autoplay\"></video><img onClick=\"close1()\" class=\"vclose\" src=\"gb.png\" width=\"25\" height=\"25\"/>");
+                    $('.videos').show();
+                });
+
+                function close1(){
+                    var v = document.getElementById('video');//获取视频节点
+                    $('.videos').hide();//点击关闭按钮关闭暂停视频
+                    v.pause();
+                    $('.videos').html();
+                }
+            },
+            delete: function(){
+                var that = this;
+                //多窗口模式，层叠置顶
+                layer.open({
+                    type: 1 //此处以iframe举例
+                    ,title: '提示'
+                    ,area: ['380px', '221px']
+                    ,shade: 0.3
+                    ,maxmin: true
+                    ,content: "<div style='text-align:center;line-height:120px;'>确认要删除？</div>"
+                    ,btn: ['确定', '取消'] //只是为了演示
+                    ,btn2: function(){
+                        layer.closeAll();
+                    }
+
+                });
+            },
+            upload: function(){
+                var that = this;
+                //多窗口模式，层叠置顶
+                layer.open({
+                    type: 1 //此处以iframe举例
+                    ,title: '上传到'
+                    ,area: ['502px', '452px']
+                    ,shade: 0.3
+                    ,maxmin: true
+                    ,content: "<div id='form'></div>"
+                    ,btn: ['开始上传', '取消'] //只是为了演示
+                    ,btn2: function(){
+                        layer.closeAll();
+                    }
+                    ,yes: function(){
+                        layer.closeAll();
+                        $("#list1").hide();
+                        $('#list2').show();
+                    }
+
+                });
+                layui.laytpl($("#upload").html()).render({}, function(html){
+                    $("#form").html(html);
+                    layui.form.render();
+                })
+                var settingss = {
+                    data: {
+                        simpleData: {
+                            enable: true,  //true 、 false 分别表示 使用 、 不使用 简单数据模式
+                            idKey: "id",  //节点数据中保存唯一标识的属性名称
+                            pIdKey: "parentId",    //节点数据中保存其父节点唯一标识的属性名称
+                            rootPId: -1  //用于修正根节点父节点数据，即 pIdKey 指定的属性值
+                        },
+                        key: {
+                            name: "name"  //zTree 节点数据保存节点名称的属性名称  默认值："name"
+                        }
+                    },
+                    view: {showLine: false, showIcon: true}
+                };
+                ajax("/manage/company/getCompanyTree","get",{}).then(data=>{
+                    console.log(data);
+                var nodes = data.obj;
+                zTreeObj = $.fn.zTree.init($("#treeDemo1"), settingss, data.obj); //初始化树
+                zTreeObj.expandAll(true);    //true 节点全部展开、false节点收缩
+            })
+            }
+        };
+
+        $('.layui-btn').click(function(event){
+            event.stopPropagation();
+            var othis = $(this), method = othis.data('method');
+            active[method] ? active[method].call(this, othis) : '';
+        });
+        $('.img').click(function(){
+            var othis = $(this), method = othis.data('method');
+            active[method] ? active[method].call(this, othis) : '';
+        });
+    });
+</script>
+<script type="text/html" id='upload'>
+    <div class='treeBox' style='margin:15px 35px;border:1px solid #f5f5f5;width:428px;height:317px;'>
+        <ul id="treeDemo1" class="ztree"  style="width: 428px;height: 317px;"></ul>
+    </div>
+</script>
+<script type="text/html" id='detail'>
+    <div class='prev'>
+        <i class='layui-icon layui-icon-left'></i>
+    </div>
+    <div class='box'>
+        <div class='left'>
+            <div class='image' style='position:relative;' vpath="./img/u6147.png" ipath="https://blz-videos.nosdn.127.net/1/OverWatch/OVR-S03_E03_McCree_REUNION_zhCN_1080P_mb78.mp4">
+                <img src="./img/u6147.png" width="100%" height="100%" />
+                <div style="width: 60px;height:60px;position:absolute;top:50%;left:50%;margin:-30px 0 0 -30px;">
+                    <img src="./img/u7603.png" alt="" style="width: 100%;height:100%;">
+                </div>
+                <div class='videos'></div>
+            </div>
+
+            <p style='width:795px;margin-top:10px;text-align:left;'><span style="color: #0000ff;">视频</span>&nbsp;<span style='color:#000;'>|</span>&nbsp;<span style='color:#000;'>banner新闻.mp4</span></p>
+        </div>
+        <div class='rights'>
+            <div class='layui-btn-container' style='margin-top:10px;'>
+                <button class='layui-btn layui-btn-normal layui-btn-sm'style='margin-left:0px;'>立即下载</button>
+                <button class='layui-btn layui-btn-normal layui-btn-sm' style='margin-left:20px;'><i class='layui-icon layui-icon-delete'></i></button>
+            </div>
+            <p style='margin-top:20px; color:#666;text-align:left;'>名称：banner新闻</p>
+            <p style='margin-top:10px; color:#666;text-align:left'>大小：47.29MB</p>
+            <p style='margin-top:10px; color:#666;text-align:left'>格式：MP4</p>
+            <p style='margin-top:10px; color:#666;text-align:left'>上传时间：2019.04.26</p>
+            <p style='margin-top:10px; color:#666;text-align:left'>路径：</p>
+            <p style='margin-top:10px; color:#666;text-align:left'>来源：</p>
+            <p style='margin-top:10px; color:#666;text-align:left'>版权所属：</p>
+            <button class='layui-btn layui-btn-danger' style='margin-top:60px;margin-left:-50px;' onclick='goToDetail()'>查看详情</button>
+        </div>
+    </div>
+    <div class='next'>
+        <i class='layui-icon layui-icon-right'></i>
+    </div>
+</script>
+<script>
+    // layui.use('layer', function(){ //独立版的layer无需执行这一句
+    //     var  layer = layui.layer; //独立版的layer无需执行这一句
+    function goToDetail(event){
+
+        layer.closeAll();
+        $("#list1").hide();
+        $("#list6").show();
+    }
+    function update(){
+        $("#list6").hide();
+        $("#list7").show();
+    }
+
+
+</script>
+</body>
+
+</html>

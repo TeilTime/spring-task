@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jnetdata.simple.manage.msg.mapper.MsgMapper">
+
+    <select id="getAllNewsId" parameterType="java.lang.Long" resultType="java.lang.String">
+        select NEWSID from customernewslog
+    </select>
+
+    <select id="remind" resultType="com.jnetdata.simple.manage.msg.model.Msg">
+        select newsid id, addressee receptionId, sender sendID, nrewstitle title, newscontext content, sendtime sendTime, status
+        from customernewslog
+    </select>
+
+</mapper>

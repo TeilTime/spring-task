@@ -1,0 +1,520 @@
+﻿<title>我的待办</title>
+<style>
+    #nav span,.right span{display: none;}
+        #nav a{display: inline-block;width: 40px;height: 56px;text-align: center;border: 1px solid #f5f5f5;}
+        #nav a:nth-of-type(3){display: inline-block;width: 220px;height: 52px; text-align: left;padding-left: 20px;border-top: 2px solid #000;font-weight: bold;}
+        .right{display: inline-block;position: absolute;top: 0;right: 0;}
+        .layui-breadcrumb a{color: #000!important;}
+        #title li{margin-left:20px;margin-bottom: 5px;}
+        .select{border-bottom: 4px solid #379ff7;color: #379ff7!important;}
+        .unselect{border-bottom: 0;color: #000!important;}
+        .layui-tab-title .layui-this:after{border:0;}
+        .options_files{width: 102px;height: 75px;border:1px solid #000; position: absolute;right: 440px;bottom:195px;display: none}
+        .options_files li {width: 100px; height: 25px;text-align: center;line-height: 25px;}
+        .create .layui-collapse{width: 500px; margin-top: 20px;}
+        .date{background: url(./img/datePicker.gif) no-repeat right;}
+        #select li{margin-right: 5px;width: auto;font-size: 12px;padding: 0}
+        #bottom:hover{color: #fff;background: #379ff7;}
+        .role{width: 260px;height: 272px;}
+        .role li {color:#126DBA; padding: 5px 10px!important;}
+        .role li:hover{color: #fff;background: #379ff7;}
+        .list li {height: 30px; text-align: center;line-height: 30px;}
+        .list li:hover{color: #fff;background: #379ff7;}
+        .layui-colla-icon{position: absolute;top:0;}
+        .layui-colla-title{background: #fff;}
+        .layui-colla-item{border: none!important;}
+        #check .layui-form-checkbox[lay-skin=primary] {
+        margin-top: -2px;
+        margin-left: 10px;
+    }
+    .node_name{color: #000;}
+    .ztree li span.button.noline_open {
+        background-position: -110px -88px;
+    }
+    .ztree li span.button.ico_docu{margin-top: 3px;}
+    .layui-collapse{margin-left: 15px;}
+     .addColor{background: rgba(218, 250, 162, 1)}
+    .left-list .layui-form-label{padding: 0px; width: auto;}
+    .left-list .layui-input-block { margin-left: 28px;}
+    .left-list .layui-form-item .layui-form-checkbox[lay-skin=primary] {  margin-top: 5px;}
+    .left-list .active{background:rgba(218, 250, 162, 1)}
+    .left-list .active2{background:rgba(218, 250, 162, 1)}
+    .left-list .layui-card-body{padding:10px 0;height: 85%;}
+    .left-list .layui-form-item{padding:8px 15px;margin-bottom: 0px;cursor: pointer;}
+    .left-list .layui-btn-container{padding-left:25px;}
+</style>
+
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space12 h100">
+        <div class="layui-col-md3 h100 md3-left">
+            <div class="layui-card h100">
+                <div class="layui-card-header">用户</div>
+                <div class="layui-card-body left-list" id="userList">
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md9 h100 md3-right">
+            <div class="layui-card h100">
+                <div class="layui-card-body">
+                    <div class="layui-tab" id="content">
+                        <ul class="layui-tab-title" style="height: 44px;" id='title'>
+                          <li class=" layui-this select" onclick="getWork()">我的待办</li>
+                          <li class="unselect" onclick="historyWork()">我已办结</li>
+                        </ul>
+                        <div class="layui-tab-content" >
+                          <div class="layui-tab-item layui-show">
+                            <div class="layui-btn-container" style="display: inline-block;">
+                                <button class="layui-btn " id="create">新建流程</button>
+                            </div>
+                            <table class="layui-hide" id="workTable" lay-filter="workTable"></table>
+                            <ul class="options_files">
+                                <li>预览</li>
+                                <li>下载</li>
+                                <li>转存</li>
+                            </ul>
+                          </div>
+                        </div>
+                    </div>
+                    <div class="create" style="display: none;" id="createView">
+                        <div class="layui-collapse" lay-filter="test" style='display:inline-block'>
+                            <div class="layui-colla-item">
+                                <h2 class="layui-colla-title">流程列表</h2>
+                                <div class="layui-colla-content layui-show" id="deployList" style="height: 600px;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id='deployListTpl'>
+    {{# layui.each(d, function(index, item){ }}
+    <p onclick="showCreateTaskView('{{item.id}}')">{{item.name}}</p>
+    {{# }) }}
+</script>
+<script type="text/html" id='createTaskViewTpl'>
+    <form class="layui-form">
+        {{# layui.each(d.data, function(index, item){ }}
+        <div class='layui-form-item'>
+            <label class='layui-form-label'>{{item.name}}：</label>
+            <div class='layui-input-block'>
+                <input class="layui-input" placeholder="{{typeof(item.placeholder)=='string'?item.placeholder:''}}" name="{{item.id}}">
+            </div>
+        </div>
+        {{# }) }}
+        <input type="hidden" name="id" value="{{d.id}}">
+        <div class="button-bar">
+            <button class="layui-btn" lay-submit lay-filter="createTask">确认</button>
+            <button class="layui-btn" type="button" data-type="close">取消</button>
+        </div>
+    </form>
+</script>
+<script type="text/html" id='WorkDetailTpl'>
+    <colgroup>
+        <col width="50">
+        <col width="150">
+        <col>
+    </colgroup>
+    <tbody>
+    <tr>
+        <td>水表Id：</td>
+        <td>{{d.waterMeterId?d.waterMeterId:""}}</td>
+    </tr>
+    <tr>
+        <td>抄表负责人：</td>
+        <td>{{d.charger?d.charger:""}}</td>
+    </tr>
+    <tr>
+        <td>抄表方式：</td>
+        <td>{{d.checkType?d.checkType:""}}</td>
+    </tr>
+    <tr>
+        <td>计划抄表日期</td>
+        <td>{{d.planDate?d.planDate:""}}</td>
+    </tr>
+    <tr>
+        <td>实际抄表时间</td>
+        <td>{{d.checkDate?d.checkDate:""}}</td>
+    </tr>
+    <tr>
+        <td>当前状态</td>
+        <td>{{d.status?d.status:""}}</td>
+    </tr>
+    <tr>
+        <td>抄表结果</td>
+        <td>{{d.watchReading?d.watchReading:""}}</td>
+    </tr>
+    <tr>
+        <td>当前水表读数</td>
+        <td>{{d.watchReading?d.watchReading:""}}</td>
+    </tr>
+    <tr>
+        <td>本阶段实际用水量</td>
+        <td>{{d.stepConsumption?d.stepConsumption:""}}</td>
+    </tr>
+    <tr>
+        <td>本阶段水费</td>
+        <td>{{d.waterAmount?d.waterAmount:""}}</td>
+    </tr>
+    </tbody>
+</script>
+<script type="text/html" id='doWorkTpl'>
+    <form class="layui-form">
+        {{# layui.each(d.data, function(index, item){ }}
+        <div class='layui-form-item'>
+            <label class='layui-form-label'>{{item.name}}：</label>
+            <div class='layui-input-block'>
+                <input class="layui-input" placeholder="{{typeof(item.placeholder)=='string'?item.placeholder:''}}" name="{{item.id}}">
+            </div>
+        </div>
+        {{# }) }}
+        <input type="hidden" name="id" value="{{d.id}}">
+        <div class="button-bar">
+            <button class="layui-btn" lay-submit lay-filter="finishTask">提交</button>
+        </div>
+    </form>
+</script>
+<script type="text/html" id="workNameTpl">
+    <div>
+        <a href="javascript:showWorkDetail();" style='color:#126DBA'>{{d.name}}</a>
+    </div>
+</script>
+<script type="text/html" id="belong">
+    <div>
+        <a href="#" style='color:#126DBA'>{{d.pName}}</a>
+    </div>
+</script>
+<script type="text/html" id="step">
+    <div>
+        <a href="javascript:showImg('{{d.processInstanceId}}')" style='color:#126DBA'>{{d.name}}</a>
+    </div>
+</script>
+<script type="text/html" id="createUserTpl">
+    lidonghui
+</script>
+<script type="text/html" id="operation">
+    <div class='layui-btn-container'>
+        {{# if(d.state == 0){
+            if(d.assignee){ }}
+                <button class='layui-btn  layui-btn-sm' lay-event='doWork'>主办</button>
+                <!--<button class='layui-btn  layui-btn-sm' lay-event='trusted'>委托</button>-->
+            {{# }else{ }}
+                <button class='layui-btn  layui-btn-sm' lay-event='takeWork'>认领</button>
+            {{# }
+            }
+        }}
+        <!--<button class='layui-btn  layui-btn-sm'>导出</button>-->
+        <!--<button class='layui-btn  layui-btn-sm' lay-event='delete'>删除</button>-->
+    </div>
+</script>
+<script type="text/html" id="userListTpl">
+    {{# layui.each(d,function(index,item){ }}
+    <div class="layui-form-item" data_id="{{item.id}}" data_name="{{item.id}}" pane="">
+        <div class="layui-input-block">
+            <p>{{item.group}}：{{item.id}}（{{item.lastName}}{{item.firstName}}）</p>
+        </div>
+    </div>
+    {{# }) }}
+</script>
+<script>
+    var modelObj = {};
+    getUsers();
+    var workType = 0;
+    function getUsers() {
+        ajax("/flowable/getUsers","get",{}).then(res => {
+            layui.laytpl($("#userListTpl").html()).render(res.obj, function(html){
+                $("#userList").html(html);
+            })
+        })
+    }
+    function getWork(){
+        showWork();
+        ajax("/flowable/taskList","get",{userName:modelObj.id}).then(res => {
+            console.log(res);
+            layui.table.render({
+                elem: '#workTable'
+                ,data:res.obj
+                ,limit:15
+                ,cols: [[
+                    {type:'checkbox'}
+                    ,{field:'id', title: '流水号'}
+                    ,{field:'name', title: '工作名称'/*,templet:"#workNameTpl"*/}
+                    ,{field:'pName',title: '所属流程'}
+                    ,{field:'createUser', title: '发起人'}
+                    ,{field:'name', title: '步骤与流程图', templet:"#step"}
+                    ,{field:'time', title: '接收时间'}
+                    ,{field:'state', title: '状态', templet:"#stateTpl"}
+                    ,{field:'operations',  title: '操作',toolbar:"#operation"}
+                ]]
+            });
+        });
+    }
+    function historyWork(){
+        ajax("/flowable/historyList","get",{userName:modelObj.id}).then(res => {
+            layui.table.render({
+                elem: '#workTable'
+                ,data:res.obj
+                ,limit:15
+                ,cols: [[
+                    {type:'checkbox'}
+                    ,{field:'id', width:290, title: '流水号'}
+                    ,{field:'name', minWidth:150, title: '工作名称'/*,templet:"#workNameTpl"*/}
+                    ,{field:'pName', width:120, title: '所属流程'}
+                    ,{field:'createUser', width:100, title: '发起人'}
+                    ,{field:'name', title: '步骤与流程图', minWidth: 100,templet:"#step"}
+                    ,{field:'time', width:160, title: '结束时间'}
+                    ,{field:'state', width:80, title: '状态', templet:"#stateTpl"}
+                ]]
+            });
+        });
+    }
+    function showCreateTaskView(id) {
+        ajax("/flowable/startForm","get",{id:id}).then(res => {
+            if(res.obj.fields){
+                layer.open({
+                    type: 1 //此处以iframe举例
+                    ,title: '创建流程'
+                    ,area: ['400px', '348px']
+                    ,maxmin: false
+                    ,content: "<div id='createTaskView'></div>"
+                });
+                layui.laytpl($("#createTaskViewTpl").html()).render({id:id,data:res.obj.fields}, function(html){
+                    $("#createTaskView").html(html);
+                })
+            }else{
+                createTask(id);
+            }
+            showWork();
+        })
+    }
+    function showWorkDetail(){
+        layer.open({
+            type: 1 //此处以iframe举例
+            ,title: '详情'
+            ,area: ['400px', '560px']
+            ,maxmin: false
+            ,content: "<div class='layui-card-body'><table class='layui-table' lay-even='' lay-skin='row' id='detailView'></table></div>"
+        });
+        layui.laytpl($("#WorkDetailTpl").html()).render({}, function(html){
+            $("#detailView").html(html);
+        })
+    }
+    function showImg(processId){
+        layer.open({
+            type: 1 //此处以iframe举例
+            ,title: '流程进度图'
+            ,area: ['1390px', '560px']
+            ,maxmin: false
+            ,content: "<div class='layui-card-body'><img src='/flowable/getImg?id="+processId+"'/></div>"
+        });
+       /* layui.laytpl($("#WorkDetailTpl").html()).render({}, function(html){
+            $("#detailView").html(html);
+        })*/
+    }
+</script>
+<script>
+    $(function(){
+        $("#create").click(function(){
+            ajax("/flowable/process","post",{}).then(res => {
+                layui.laytpl($("#deployListTpl").html()).render(res.obj, function(html){
+                    $("#deployList").html(html);
+                    $("#content").hide();
+                    $("#content").removeClass("layui-show");
+                    layui.use(['element', 'layer'], function(){
+                        var element = layui.element;
+                        var layer = layui.layer;
+                        element.render('collapse');
+                    });
+                    $('#createView').show();
+                })
+            })
+        })
+        $("#content li").on('click', function (e) {
+            var others = $(this).siblings();
+            if ($(this).hasClass('unselect')) {
+                $(this).removeClass('unselect');
+                $(this).addClass('select');
+                others.addClass('unselect');
+                $('#createView').hide();
+            }
+            workType = $(this).index();
+        })
+    })
+    function showWork(){
+        $("#content").addClass("layui-show");
+        $("#content").show();
+        $('#createView').hide();
+    }
+    function createTask(id){
+        var param = {processDefinitionId:id};
+        var variables = [];
+        variables.push({name:"checkWaterMeterPlan_id",value:"1001"});
+        variables.push({name:"checker",value:"zhangsan"});
+        variables.push({name:"checker_type",value:0});
+        param.variables = variables;
+        ajax2("/flowable/start","post",{data:JSON.stringify(param)}).then(function (res) {
+            if(res.success){
+                layer.closeAll();
+            }else{
+                layer.alert(res.msg);
+            }
+        })
+    }
+
+</script>
+<script>
+    layui.form.on('submit(createTask)', function(data){
+        var fields = data.field;
+        var parm = {};
+        var variables = [];
+        for(var key in fields){
+            if(key == "id"){
+                parm.processDefinitionId = fields.id;
+            }else{
+                variables.push({name:key,value:fields[key]});
+            }
+        }
+        parm.variables = variables;
+        ajax2("/flowable/start","post",{data:JSON.stringify(parm)}).then(function (res) {
+            if(res.success){
+                layer.closeAll();
+            }else{
+                layer.alert(res.msg);
+            }
+        })
+        return false;
+    });
+    layui.table.on('tool(workTable)', function(obj){
+        var data = obj.data;
+        if(obj.event === 'del'){
+            layer.confirm('真的删除行么', function(index){
+                layer.close(index);
+            });
+        } else if(obj.event === 'doWork'){
+            if(data.name == '册页录入'){
+                var params = {};
+                finishWork(data.id,params);
+            }else if(data.name == '抄表器抄表'){
+                var params = {};
+                finishWork(data.id,params);
+            }else if(data.name == '远抄'){
+                var params = {};
+                finishWork(data.id,params);
+            }else if(data.name == '核册'){
+                // layer.open({
+                //     type: 1 //此处以iframe举例
+                //     ,title: '核册'
+                //     ,area: ['400px', '348px']
+                //     ,maxmin: false
+                //     ,content: "<div id='heceForm'></div>"
+                // });
+                // layui.laytpl($("#heceFormTpl").html()).render({}, function(html){
+                //     $("#heceForm").html(html);
+                // })
+                layer.confirm("有无异常",{
+                    btn: ['有', '无'] //只是为了演示
+                },function(){
+                    var params = {};
+                    var variables = [{name:"hasCheckException",value:true}];
+                    params.variables = variables
+                    finishWork(data.id,params);
+                    layer.closeAll();
+                }
+                ,function(){
+                    var params = {};
+                    var variables = [{name:"hasCheckException",value:false}];
+                    params.variables = variables
+                    finishWork(data.id,params);
+                    layer.closeAll();
+                });
+            }else if(data.name == '确定是否需要复查'){
+                layer.confirm("确定是否需要复查",{
+                    btn: ['是', '否'] //只是为了演示
+                },function(){
+                    var params = {};
+                    var variables = [{name:"needRecheck",value:true}];
+                    params.variables = variables
+                    finishWork(data.id,params);
+                    layer.closeAll();
+                }
+                ,function(){
+                    var params = {};
+                    var variables = [{name:"needRecheck",value:false}];
+                    params.variables = variables
+                    finishWork(data.id,params);
+                    layer.closeAll();
+                });
+            }else if(data.name == '按权限审批'){
+                var params = {};
+                finishWork(data.id,params);
+            }else if(data.name == '计算'){
+                var params = {};
+                finishWork(data.id,params);
+            }else if(data.name == '水量水费复查'){
+                layer.confirm("确定是否有问题",{
+                    btn: ['是', '否'] //只是为了演示
+                },function(){
+                    var params = {};
+                    var variables = [{name:"hasException",value:true}];
+                    params.variables = variables
+                    finishWork(data.id,params);
+                    layer.closeAll();
+                }
+                ,function(){
+                    var params = {};
+                    var variables = [{name:"hasException",value:false}];
+                    params.variables = variables
+                    finishWork(data.id,params);
+                    layer.closeAll();
+                });
+            }else if(data.name == '发单'){
+                var params = {};
+                finishWork(data.id,params);
+            }
+        } else if(obj.event === 'takeWork'){
+            var params = {assignee:modelObj.id};
+            ajax2("/flowable/takeWork","post",{id:data.id,body:JSON.stringify(params)}).then(res=>{
+                getWork();
+            })
+        }
+    });
+    function finishWork(id,params){
+        params.action = "complete";
+        ajax2("/flowable/completeTask","post",{id:id,body:JSON.stringify(params)}).then(res => {
+            if(res.success){
+                getWork();
+            }else{
+                layer.alert(res.msg);
+            }
+        });
+    }
+</script>
+<script type="text/html" id="stateTpl">
+    {{#  if(d.state == 0){ }}
+    <span style='color:green'>进行中</span>
+    {{#  } else{ }}
+    <span style='color:red;'>已结束</span>
+    {{#  } }}
+</script>
+<script>
+    $(function(){
+        $(".left-list").on("mouseover",".layui-form-item",function(){
+            $(this).addClass("active2").siblings().removeClass("active2");
+        })
+        $(".left-list").on("mouseleave",".layui-form-item",function(){
+            $(this).removeClass("active2");
+        })
+        $(".left-list").on("click",".layui-form-item",function(){
+            $(this).addClass("active").siblings().removeClass("active");
+            modelObj.id = $(this).attr("data_id");
+            if(workType == 0){
+                getWork();
+            }else{
+                historyWork();
+            }
+        })
+        layui.form.render();
+    })
+</script>

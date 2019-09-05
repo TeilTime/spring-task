@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jnetdata.simple.manage.plantask.mapper.QuartzJobMapper">
+
+	<!-- 根据jobClassName查询 -->
+	<select id="findByJobClassName" resultType="com.jnetdata.simple.manage.plantask.model.QuartzJob">
+		select
+		id AS id,
+		create_time AS createTime,
+		del_flag AS delFlag,
+		job_class_name AS jobClassName,
+		cron_expression AS cronExpression,
+		`parameter`,
+		description,
+		`status`,
+		CRNUMBER AS createBy,
+		modify_by AS modifyBy,
+		modify_time AS modifyTime
+		from  sys_quartz_job  where job_class_name = #{jobClassName}
+	</select>
+</mapper>

@@ -1,0 +1,503 @@
+﻿﻿<style>
+  .ztree li a{width: 100%}
+  .ztree li a:hover{background:rgba(245, 247, 250, 1)}
+  .layui-table-cell-1-menuName{width: 251px;height: 38px;}
+  .layui-table-link { display: block;width: 251px;height: 38px;}
+  .layui-table-link:hover{color: #009688!important;}
+  .layui-table-cell .layui-table-link {color: #000;}
+  #info tr td:first-child{text-align: right; background: #f5f5f5;}
+  #info tr td:last-child{ background: #ffffff;}
+  #info tr td{border: 1px solid #e7e7e7;}
+  .layui-card-body button:hover{color: #009688!important;}
+  .level2 .noline_open{display: none!important;}
+  th .layui-table-cell{text-align: center}
+</style>
+
+<div class="layui-fluid">
+  <div class="layui-row layui-col-space12 h100">
+    <div class="layui-col-md3 h100 md3-left">
+      <div class="layui-card h100">
+        <div class="layui-card-header">菜单设置</div>
+        <div class="layui-card-body">
+          <div class="button-container">
+            <button type="button" class="layui-btn layui-btn-sm" data-type="add">
+              <i class="layui-icon">&#xe608;</i> 添加
+            </button>
+            <button type="button" class="layui-btn layui-btn-sm" data-type="edit">
+              <i class="layui-icon">&#xe642;</i> 修改
+            </button>
+            <button type="button" class="layui-btn layui-btn-sm" data-type="del">
+              <i class="layui-icon">&#xe640;</i> 删除
+            </button>
+          </div>
+          <div style="width: 300px; overflow: hidden;">
+            <ul id="treeDemo" class="ztree"></ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="layui-col-md9 h100 md3-right">
+      <div class="layui-card h100" id="list">
+        <div class="layui-card-header">菜单列表</div>
+        <div class="layui-card-body" style="height: 640px">
+          <table id="demo" lay-filter="test"></table>
+        </div>
+        <div class="" id="page" style="    margin-left: 15px;"></div>
+      </div>
+      <div class="layui-card h100" id="base">
+        <div class="layui-card-header">基本信息</div>
+        <div class="layui-card-body">
+          <table class="layui-table" lay-even="" lay-skin="row" id="info">
+            <colgroup>
+              <col width="50">
+              <col width="150">
+              <col>
+            </colgroup>
+            <tbody>
+              <tr>
+                <td>菜单名称</td>
+                <td id="menuName"></td>
+              </tr>
+              <tr>
+                <td>父节点</td>
+                <td id="parentName"></td>
+              </tr>
+              <tr>
+                <td>布局</td>
+                <td>两栏式</td>
+              </tr>
+              <tr>
+                <td>状态</td>
+                <td style="color: #009688" id="buju"></td>
+              </tr>
+              <tr>
+                <td>URL</td>
+                <td id="menuUrl"></td>
+              </tr>
+              <tr>
+                <td>唯一标识</td>
+                <td id="menuCode"></td>
+              </tr>
+              <tr>
+                <td>图标链接</td>
+                <td id="menuPhotoUrl"></td>
+              </tr>
+              <tr>
+                <td>扩展字段</td>
+                <td id="menuOther"></td>
+              </tr>
+            </tbody>
+          </table>
+          <button class="layui-btn layui-btn-primary" style="margin-top: 20px;" onclick="returnBack()">返回上一级</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/html" id="titleTpl">
+  <a href="javascript:void(0);" onclick='go("{{d.id}}")' class="layui-table-link">{{d.name}}</a>
+</script>
+
+<script type="text/html" id="titleActive">
+  <a>{{d.active == 1 ? "启用" : "停用"}}</a>
+</script>
+
+
+<!--弹出层模板（新增，查看，编辑）-->
+<script type="text/html"  id="tableDataTemplate">
+  <form class="layui-form" lay-filter="menuForm">
+    <div class="layui-card">
+      <div class="layui-card-body">
+        <div class="layui-form-item">
+          <label class="layui-form-label">父菜单:</label>
+          <div class="layui-input-block">
+            <input type="text" name="parentTitle" readonly autocomplete="off" class="layui-input">
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">菜单名:</label>
+          <div class="layui-input-block">
+            <input type="text" name="name" required lay-verify="required" placeholder="请输入" value="" autocomplete="off" class="layui-input">
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">状态:</label>
+          <div class="layui-input-block">
+            <input type="radio" name="active" value="1" title="启用" checked="checked">
+            <input type="radio" name="active" value="0" title="停用">
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">唯一标识:</label>
+          <div class="layui-input-block">
+            <input type="text" name="naturalId" placeholder="请输入" value="" autocomplete="off" class="layui-input">
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">描述:</label>
+          <div class="layui-input-block">
+            <input type="text" name="description" placeholder="请输入" value="" autocomplete="off" class="layui-input">
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">图标:</label>
+          <div class="layui-input-block">
+            <input type="text" name="photoUrl" placeholder="请输入" value="" autocomplete="off" class="layui-input">
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">URL:</label>
+          <div class="layui-input-block">
+            <input type="text" name="url" placeholder="请输入" value="" autocomplete="off" class="layui-input">
+          </div>
+        </div>
+          <div class="layui-form-item">
+              <label class="layui-form-label">选择机构:</label>
+              <div class="layui-input-block">
+                  <select class="layui-input" lay-verify="required" id="sorg" name="companyId">
+                  </select>
+              </div>
+          </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">前一菜单:</label>
+          <div class="layui-input-block">
+            <select class="layui-input" id="seq" name="seq">
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+    <input type="hidden" name="type" value="" id="menuTy">
+    <input hidden="hidden" name="id" value="">
+    <input hidden="hidden" name="parentId" value="">
+    <div class="button-bar">
+      <button class="layui-btn" lay-submit lay-filter="addMenu">确认</button>
+      <button class="layui-btn" type="button" data-type="close">取消</button>
+    </div>
+  </form>
+</script>
+
+<script>
+  var url = "/manage/menu";
+  var menuObj = {};
+  var pageSize = 15;
+  var zTreeObj;
+  var menuType = paramObj["type"];
+
+  function checkChoice(){
+
+    if(!menuObj.id){
+      layer.alert("请选择菜单");
+      return false;
+    }
+    return true;
+  }
+
+  //设置弹出层数据（新增，查看，修改）
+  function setOpenData(data,type) {
+    layui.layer.open({
+      type: 1,
+      title:"数据<span style='color: red;float:right' id='tempMsg'>",
+      area:['500px','570px'],
+      anim: 2,
+      content: '<div id="table_data"></div>'
+    });
+    layui.laytpl($("#tableDataTemplate").html()).render({}, function(html){
+      $("#table_data").html(html)
+    });
+
+    $("#menuTy").val(menuType);
+
+    setCompanySelect();
+
+    //组装seq下拉框
+    var html = "<option value='0'>最前面</option>";
+    var seqNodes; //参与排序所有节点
+    if(data.id){
+      if(zTreeObj.getSelectedNodes()[0].getParentNode()){
+        seqNodes = zTreeObj.getSelectedNodes()[0].getParentNode().children;
+      }else{
+        var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
+        //获取全部节点数据
+        seqNodes = treeObj.getNodes();
+      }
+    }else{
+      if(zTreeObj.getSelectedNodes()[0]){
+        seqNodes = zTreeObj.getSelectedNodes()[0].children;
+      }else{
+        var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
+        //获取全部节点数据
+        seqNodes = treeObj.getNodes();
+      }
+    }
+
+    var obj = $("#seq option:selected");
+
+    //拼接html
+    seqNodes.forEach(function(item,index){
+      html += "<option value='"+item.seq+"'>"+item.name+"</option>";
+    });
+    var maxSeq;
+    if(seqNodes.length>0){
+      maxSeq = seqNodes[seqNodes.length-1].seq+1; //排序最大值
+    }else{
+      maxSeq = 0;
+    }
+    html += "<option value='"+maxSeq+"'>最后面</option>";
+    $("#seq").html(html);
+    layui.form.val("menuForm",data);
+    layui.form.render();
+  }
+
+  function setCompanySelect(){
+      //1.获取父节点集合
+      var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
+      //返回一个根节点
+      var nodes = treeObj.getNodesByFilter(function (node) { return node.level == 0 });
+      //2.循环集合 拼装option
+      var html1;
+      nodes.forEach(function (item,index) {
+          html1 += "<option value='"+item.id+"'>"+item.name+"</option>";
+      });
+      $("#sorg").html(html1);
+  }
+
+  //新增数据方法
+  function doAdd(data){
+    ajax(url,'post',JSON.stringify(data)).then(res=>{
+      if(res.success){
+
+        res.msg = "添加成功";
+
+        clearMenuObj();
+          layer.closeAll();
+          tempFindMenu();
+          findMenu();
+      }else{
+          layer.alert("添加失败");
+      }
+    }).catch(res=>{
+
+    })
+  }
+
+  function clearMenuObj(){
+    menuObj = {};
+  }
+
+  //更新方法
+  function doUpdate(data){
+    ajax(url+"/"+data.id,"put",JSON.stringify(data)).then(res=>{
+      if(res.success){
+          layer.closeAll();
+          tempFindMenu();
+          findMenu();
+      }else{
+          layer.alert("修改失败");
+      }
+
+    })
+  }
+
+  function showObj(obj){
+      $("#menuName").text(obj.name);
+      $("#parentName").text(obj.parentTitle);
+      $("#menuUrl").text(obj.url);
+      $("#menuCode").text(obj.naturalId);
+      $("#menuPhotoUrl").text(obj.photoUrl);
+      $("#list").hide();
+      $('#base').show();
+      $("#buju").text(obj.active == 1 ? "启用" : "停用");
+
+  }
+
+  function go(id){
+    getMenuObj(id).then(res=>{
+      showObj(res.obj);
+    });
+  }
+
+  function returnBack(){
+    $("#list").show();
+    $('#base').hide();
+  }
+
+  //根据id查询数据
+  function getMenuObj(id) {
+    return new Promise((resovle, reject) => {
+      ajax(url+"/"+id,"get",{}).then(res=>{
+        resovle(res);
+      }).catch(res=>{
+        reject(res);
+      })
+    })
+  }
+
+  //获取菜单树结构数据
+  function tempFindMenu() {
+    ajax(url+"/tree","get",{type:menuType}).then(res=>{
+      var datas = res.obj;
+      for(var i in datas){
+        if(datas[i].parentId == 0){
+          datas[i].icon = "/img/u5548.png";
+        }else if(datas[i].parentId == datas[i].companyId){
+          datas[i].icon = "/img/u2615.png";
+        }else if(datas){
+          datas[i].icon = "/img/u2628.png";
+        }
+        datas[i].url = "";
+      }
+      showTree(datas);
+    }).catch(res=>{
+
+    })
+  }
+
+  //删除
+  function doDelete(id) {
+    ajax(url+"/"+id,"delete",{}).then(res=>{
+      if(res.success){
+        tempFindMenu();
+        clearMenuObj();
+        findMenu();
+        layer.closeAll();
+      }else{
+          layer.alert("删除失败");
+      }
+    }).catch(res=>{
+
+    })
+  }
+  doList(1);
+  //条件列表查询
+  function doList(current) {
+    var data = {};
+    data.pager = {current:current,size:pageSize};
+    data.entity= {
+      "type": menuType
+    };
+    ajax(url+"/list","post",JSON.stringify(data)).then(res=>{
+      if(res.success){
+        page(res.obj.total,res.obj.current,pageSize);
+        setTableData(res.obj.records);
+      }
+    }).catch(res=>{
+
+    })
+  }
+
+  function del(){
+
+    if(checkChoice()) {
+      layer.alert("确认删除菜单:["+menuObj.name+"]?",function(){
+        doDelete(menuObj.id);
+      })
+    }
+  }
+  function add(){
+    setOpenData({parentId:menuObj.id?menuObj.id:0,parentTitle :menuObj.name},2);
+  }
+  function edit(){
+    if(checkChoice()) {
+      setOpenData(menuObj, 2);
+    }
+  }
+</script>
+<script>
+  $(function(){
+    returnBack();
+    tempFindMenu();
+  })
+</script>
+<script>
+  //layui
+
+  layui.laypage.render({
+    elem: 'page'
+    ,count: 100 //数据总数
+    ,limit:15
+    ,curr:1
+    ,jump: function(obj,first){
+      if(!first){
+        //getMetadatas(obj.curr)
+      }
+    }
+  });
+
+  layui.form.on("submit(addMenu)",function(data){
+
+    if(data.field.id){
+      doUpdate(data.field);
+    }else {
+      doAdd(data.field);
+    }
+    return false;
+  })
+
+
+
+  //渲染数据到table
+  function setTableData(data) {
+    console.log(data);
+    layui.use('table', function(){
+      var table = layui.table;
+      //第一个实例
+      table.render({
+        elem: '#demo'
+        ,data:data
+        ,limit:15
+        ,cols: [[ //表头
+          {type:'numbers', width:'98', title: '序号'}
+          ,{field: 'name', title: '菜单名称', width:'330' , templet: '#titleTpl'}
+          ,{field: 'parentTitle', title: '父节点', width:'310'}
+          ,{field: "active", title: '状态', width:'200', templet: "#titleActive"}
+          ,{field: 'url', title: 'URL', width: '360'}
+        ]]
+      });
+    });
+  }
+
+  layui.use('form', function(){
+    var form = layui.form;
+    //监听提交
+    form.on('submit(formDemo)', function(data){
+      layer.msg(JSON.stringify(data.field));
+      return false;
+    });
+  });
+</script>
+<!--ztree-->
+<script>
+  var settingss = {
+    data: {
+      simpleData: {
+        enable: true,  //true 、 false 分别表示 使用 、 不使用 简单数据模式
+        idKey: "id",  //节点数据中保存唯一标识的属性名称
+        pIdKey: "parentId",    //节点数据中保存其父节点唯一标识的属性名称
+        rootPId: -1,  //用于修正根节点父节点数据，即 pIdKey 指定的属性值
+      }
+    },
+    view: { showLine: false,showIcon:true },
+    callback: {
+      onClick: zTreeOnClick
+    }
+  };
+
+  //渲染树结构
+  function showTree(data) {
+    zTreeObj = $.fn.zTree.init($("#treeDemo"), settingss, data); //初始化树
+    zTreeObj.expandAll(true);    //true 节点全部展开、false节点收缩
+  }
+
+  function zTreeOnClick(event, treeId, treeNode) {
+    if(treeNode.parentId <= 0){
+      return false;
+    }
+    getMenuObj(treeNode.id).then(res=>{
+      menuObj = res.obj;
+      showObj(menuObj);
+    });
+  };
+
+</script>

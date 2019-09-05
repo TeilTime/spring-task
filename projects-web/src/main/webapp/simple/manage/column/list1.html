@@ -1,0 +1,495 @@
+
+
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <title>栏目管理</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="../../../public/js/layui/css/layui.css" media="all">
+  <link rel="stylesheet" href="../../../public/style/admin.css" media="all">
+  <script type="text/javascript" src="../../../public/js/jquery-2.2.2.min.js"></script>
+  <script type="text/javascript" src="../../../public/js/layui/layui.all.js"></script>
+</head>
+<body>
+<style>
+  #table_data input{
+    width: 100%;
+    height: 30px;
+    line-height: 30px;
+    margin: 10px 0;
+  }
+  #table_data{
+    padding: 0 10px;
+    box-sizing: border-box;
+  }
+</style>
+
+<div class="main" style="width: 100%">
+  <div th:include="/simple/public/public_menu :: navMenu" style="width: 10%; float: left;"></div>
+
+  <input id="roleId" value="0" hidden="hidden">
+  <div id="demoTree"></div>
+
+<div class="layui-fluid"  style="width: 76%;float: left;padding:0px 20px;box-sizing: border-box;">
+  <div class="layui-card">
+    <div class="layui-form layui-card-header layuiadmin-card-header-auto" lay-filter="layadmin-userfront-formlist">
+    </div>
+    <!--<div class="layui-tab layui-tab-card">-->
+      <!--<ul class="layui-tab-title">-->
+        <!--<li class="layui-this">站点管理</li>-->
+        <!--<li>扩展字段</li>-->
+        <!--<li>工作流管理</li>-->
+        <!--<li>站点回收站</li>-->
+      <!--</ul>-->
+      <!--<div class="layui-tab-content" style="height: 100px;">-->
+        <!--<div class="layui-tab-item layui-show">  <div id="siteDataTable"></div></div>-->
+        <!--<div class="layui-tab-item">暂无</div>-->
+        <!--<div class="layui-tab-item">暂无</div>-->
+        <!--<div class="layui-tab-item">暂无</div>-->
+      <!--</div>-->
+    <!--</div>-->
+
+
+    <div class="layui-tab layui-tab-card">
+      <ul class="layui-tab-title">
+        <li class="layui-this">栏目管理</li>
+        <li>基本信息</li>
+        <li>模板管理</li>
+        <li>工作流管理</li>
+        <li>权限管理</li>
+        <li>高级属性</li>
+        <li>栏目分发</li>
+        <li>栏目回收站</li>
+      </ul>
+      <div class="layui-tab-content" style="height: 600px;">
+        <div class="layui-tab-item layui-show"><div id="siteDataTable"></div></div>
+        <div class="layui-tab-item">暂无</div>
+        <div class="layui-tab-item">暂无</div>
+        <div class="layui-tab-item">暂无</div>
+        <div class="layui-tab-item">暂无</div>
+        <div class="layui-tab-item">暂无</div>
+        <div class="layui-tab-item">暂无</div>
+        <div class="layui-tab-item">
+          <table id="demo" lay-filter="demo">
+            <thead>
+            <tr>
+              <th lay-data="{type:'checkbox',field:'id'}">ID</th></i>
+              <th lay-data="{field:'index', width:200}">序号</th>
+              <th lay-data="{field:'name', width:200}">栏目名称</th>
+              <th lay-data="{field:'status', width:200}">状态</th>
+              <th lay-data="{field:'CHNLNAME', width:200}">分发类型</th>
+              <th lay-data="{field:'chnlDataPath', width:200}">存放目录</th>
+              <th lay-data="{field:'chnlDesc', width:200}">服务器地址</th>
+              <th lay-data="{field:'operUser', width:200}">用户名</th>
+              <th lay-data="{fixed: 'right', width:170, align:'center', toolbar: '#barDemo'}">操作</th>
+            </tr>
+            </thead>
+          </table>
+          <div id="page" style="padding-left: 20px"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+
+<!--操作列模板-->
+<script type="text/html" id="barDemo">
+  <a class="layui-btn layui-btn-xs" lay-event="restore">还原</a>
+  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+
+
+<script type="text/html" id="siteTemplate">
+  {{# layui.each(d, function(index, item){ }}
+  <input type="checkbox" value="{{item.id}}">
+  <span>{{item.name}}</span>
+  <button class="delBtn" data-id="{{item.id}}">删除</button>
+  {{# }); }}
+
+
+</script>
+
+
+
+<script th:inline="none" type='module'>
+
+   import  base from "../../../public/js/common/base.js";
+   import conslog from "../../../public/js/common/conslog.js";
+   import menu from "../../../public/js/common/menu.js";
+   import common from "../../../public/js/common/common.js";
+
+
+
+   var cons = new conslog();
+   var url = "/manage/programa";
+   var baseOrder = [];
+   var tempSize = 10;
+
+   $(function(){
+       var tempMenu = new menu();
+       tempMenu.findMenu();
+       findColumnTree();
+       getDelList();
+
+
+       $(document).on("click",'.delBtn',function () {
+           var ids = $(this).attr("data-id");
+           setStatus(ids,1);
+       })
+   });
+
+ //新增数据方法
+   function doAdd(data){
+       let tempBase = new base(url,JSON.stringify(data),"");
+       tempBase.add().then(res=>{
+           $("#tempMsg").text(res.msg);
+       }).catch(res=>{
+
+       })
+   }
+   //更新方法
+   function doUpdate(data){
+   let tempBase = new base(url,JSON.stringify(data),data.id);
+   tempBase.updata().then(res=>{
+       $("#tempMsg").text(res.msg);
+   }).catch(res=>{
+
+   })
+   }
+   //根据id查询数据
+   function doView() {
+       let tempBase = new base(url,"","1");
+       tempBase.view().then(res=>{
+           var temp = [];
+           temp.push(res.obj);
+           setTableData(temp);
+           cons.consoleLog(temp);
+       }).catch(res=>{
+
+       })
+
+   }
+   //删除
+//    function doDelete() {
+//        let tempBase = new base(url,user,1);
+//        tempBase.delete().then(res=>{
+//           cons.consoleLog(res)
+//        }).catch(res=>{
+//
+//        })
+//    }
+   //根据ids批量删除（tree位置）
+   function doDeleteByIds(data) {
+       let tempBase = new base(url,data,'');
+       tempBase.deleteByIds().then(res=>{
+           cons.consoleLog(res)
+           $("#tempDel").text(res.msg);
+       }).catch(res=>{
+
+       })
+   }
+
+    //table处批量删除
+   function doTableDelByIds(data) {
+       let tempBase = new base('/manage/roleUser',data,'');
+       tempBase.deleteByIds().then(res=>{
+           cons.consoleLog(res)
+           $("#tempDel").text(res.msg);
+       }).catch(res=>{
+
+       })
+   }
+   //条件列表查询
+   function doList(current,size,cloum,sort) {
+       var data = getSearchCondition();
+       var sortProps = [];
+       if(baseOrder.length>0){
+           sortProps = baseOrder;
+       }else{
+           sortProps.push({key:cloum,value:sort});
+       }
+       data.pager = {current:current,size:size};
+       data.pager.sortProps = sortProps;
+       let tempBase = new base(url,JSON.stringify(data),"");
+       tempBase.list().then(res=>{
+           cons.consoleLog(res);
+//            if(current==1){
+//                page(res.obj.total);
+//            }
+           setTableData(res.obj.records);
+       }).catch(res=>{
+
+       })
+   }
+
+   //条件列表查询
+   function TempdoList(current,size,cloum,sort) {
+       var sortProps = [];
+       var data=getSearchCondition();
+       if(baseOrder.length>0){
+           sortProps = baseOrder;
+       }else{
+           sortProps.push({key:cloum,value:sort});
+       }
+       data.pager = {current:current,size:size};
+       data.pager.sortProps = sortProps;
+       let tempBase = new base(url,JSON.stringify(data),"");
+       tempBase.list().then(res=>{
+           cons.consoleLog(res);
+           page(res.obj.total);
+           setTableData(res.obj.records);
+       }).catch(res=>{
+
+       })
+   }
+
+
+   //获取tree结构数据
+   function findColumnTree() {
+       var data = getSearchCondition();
+       var para = {
+           url : "/manage/programa/getColoumTree",
+           type : 'post',
+           data : JSON.stringify(data),
+           async : true
+       }
+       let comm = new common();
+       comm.ajax(para).then(res=>{
+           cons.consoleLog(res);
+           showTree(res.obj);
+       }).catch(res=>{
+
+       })
+
+   }
+
+   //渲染树结构
+   function showTree(data) {
+
+       layui.use('tree', function(){
+           var tree = layui.tree;
+           tree({
+               elem: '#demoTree' //传入元素选择器
+               ,nodes: data
+               ,click: function(node){
+                   if(node.isSite==1){
+                       getByParent(node.id,node.isSite)
+                   }else{
+                       getByParent(node.id,node.isSite);
+                   }
+
+               }
+           });
+       });
+   }
+   //获取ids
+   function getIds(data1) {
+       var ids='';
+     /* <![CDATA[ */
+       for(var i=0;i<data1.length;i++){
+           ids = ids + data1[i].id + ","
+       }
+     /* ]]> */
+     ids = ids.substring(0,ids.length-1);
+     return ids;
+   }
+   //查询站点数据
+//   function findColumnList(){
+//       var data = getSearchCondition();
+//       var para = {
+//           url : "/manage/programa/getColoumTree",
+//           type : 'post',
+//           data : JSON.stringify(data),
+//           async : true
+//       }
+//       let comm = new common();
+//       comm.ajax(para).then(res=>{
+//           cons.consoleLog(res);
+////           layui.laytpl($("#siteTemplate").html()).render(res.obj, function(html){
+////               $("#siteDataTable").html(html)
+////           });
+//
+//       }).catch(res=>{
+//
+//       })
+//   }
+   /**
+    * 获取查询条件
+    * @returns {{}}
+    */
+   function getSearchCondition() {
+       var data = {};
+       data.status = 0;
+       return data;
+   }
+   /**
+    * 根据parentid获取子节点数据
+    * @param parentId
+    * @param type
+    */
+   function getByParent(parentId,type) {
+       var para = {
+           url : "/manage/programa/getByparentId",
+           type : 'get',
+           data : {parentId:parentId,type:type},
+           async : true
+       }
+       let comm = new common();
+       comm.ajax(para).then(res=>{
+           layui.laytpl($("#siteTemplate").html()).render(res.obj, function(html){
+               $("#siteDataTable").html(html)
+           });
+
+       }).catch(res=>{
+
+       })
+
+   }
+
+   /**
+    * 获取删除状态数据
+    */
+   function getDelList() {
+       var data = {};
+       data.pager = {current: 1, size: 10};
+       data.entity = {status: 1}
+       var para = {
+           url: "/manage/programa/getDelList",
+           type: 'post',
+           data: JSON.stringify(data),
+           async: true
+       }
+       let comm = new common();
+       comm.ajax(para).then(res => {
+           cons.consoleLog(res);
+           setTable(res.obj.records);
+           page(res.obj.total);
+       }).catch(res => {
+
+       })
+   }
+
+   /**
+    * 获取删除状态数据分页
+    */
+   function getDelListPage(current,size) {
+       var data = {};
+       data.pager = {current: current, size: size};
+       data.entity = {status: 1}
+       var para = {
+           url: "/manage/programa/getDelList",
+           type: 'post',
+           data: JSON.stringify(data),
+           async: true
+       }
+       let comm = new common();
+       comm.ajax(para).then(res => {
+           setTable(res.obj.records);
+       }).catch(res => {
+
+       })
+   }
+   /**
+    * 渲染table
+    * @param data
+    */
+   function setTable(data) {
+       layui.table.init('demo', {
+           height: 550 //设置高度
+           ,width:1400
+           ,limit: tempSize //注意：请务必确保 limit 参数（默认：10）是与你服务端限定的数据条数一致
+           //支持所有基础参数
+           ,data:data
+           ,skin: 'line' //表格风格
+           ,even: true
+//                ,limits: [5, 7, 10]
+           ,autoSort:false
+           ,toolbar: '#toolbarDemo'
+//               ,initSort: {
+//                   field: temp1 //排序字段，对应 cols 设定的各字段名
+//                   ,type: temp2 //排序方式  asc: 升序、desc: 降序、null: 默认排序
+//               }
+       });
+   }
+
+   //渲染分页
+   function page(total) {
+       layui.laypage.render({
+           elem: 'page'
+           , count: total //数据总数，从服务端得到
+           , layout: ['count', 'prev', 'page', 'next', 'limit', 'refresh', 'skip']
+           , jump: function (obj, first) {
+               //obj包含了当前分页的所有参数，比如：
+               cons.consoleLog(obj.curr); //得到当前页，以便向服务端请求对应页的数据。
+               cons.consoleLog(obj.limit); //得到每页显示的条数
+               tempSize = obj.limit;
+               //首次不执行
+               if (!first) {
+                   //do something
+                   getDelListPage(obj.curr, obj.limit);
+               }
+           }
+       });
+   }
+
+
+   //监听操作列工具条
+   layui.table.on('tool(demo)', function(obj){ //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
+       var data = obj.data; //获得当前行数据
+       var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+       var tr = obj.tr; //获得当前行 tr 的DOM对象
+
+       if(layEvent === 'restore'){ //还原
+           setStatus(data.id,0);
+       } else if(layEvent === 'del'){ //删除
+//           doTopDelete( )
+       }
+   });
+
+   /**
+    * 改变删除状态
+    * @param ids
+    * @param status
+    */
+   function setStatus(ids,status) {
+       var para = {
+           url: "/manage/programa/updateStatus",
+           type: 'get',
+           data: {ids:ids,status:status},
+           async: true
+       }
+       let comm = new common();
+       comm.ajax(para).then(res => {
+           if(status==0){
+               if(res.obj==false){
+                   layui.layer.msg("请检查上级栏目或站点是否已还原！")
+               }else{
+                   layui.layer.msg("还原成功！")
+               }
+           }else{
+               if(res.obj==false){
+                   layui.layer.msg("删除失败！")
+               }else{
+                   layui.layer.msg("删除成功，已经入回收站！")
+               }
+           }
+
+       }).catch(res => {
+
+       })
+
+   }
+
+
+
+
+
+
+</script >
+</body>
+</html>

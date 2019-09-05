@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jnetdata.simple.manage.column.mapper.ProgramaMapper">
+
+    <select id="getSiteByCompanyId" resultType="com.jnetdata.simple.manage.site.model.Site">
+      select CHANNELID id,SITEID siteId,CHNLNAME name from websiteinfo
+      where SITEID = ${siteId}
+    </select>
+
+    <select id="getSiteByCompanyId" resultType="com.jnetdata.simple.manage.site.model.Site">
+      select SITEID id,COMPANYID companyId,SITENAME name from websiteinfo
+      where COMPANYID = ${companyId}
+    </select>
+
+    <!--查询机构-->
+    <select id="getCompanyList" resultType="com.jnetdata.simple.manage.companyinfo.model.Companyinfo">
+        select COMPANYID id,CPYNAME name from  companyinfo
+        where STATUS=${status}
+    </select>
+
+    <select id="getTree" resultType="com.jnetdata.simple.manage.column.model.Programa">
+        select COMPANYID id,CPYNAME name,0 parentid,'img/u5554.png' icon,0 isSite  from companyinfo
+        union all
+        select a.siteid id,a.sitename name,a.companyid parentid,'img/u2615.png' icon,1 isSite from websiteinfo a ,companyinfo b where a.companyid = b.COMPANYID and a.status = 0
+        union all
+        select a.channelid id,a.chnlname NAME,a.siteid parentid, 'img/u2628.png' icon,2 isSite from channelinfo a,websiteinfo b ,companyinfo c WHERE a.siteid = b.siteid and b.companyid = c.companyid and a.PARENTID = 0 and a.status = 0 and b.status = 0
+        union all
+        select a.channelid id,a.chnlname NAME,a.PARENTID parentid, 'img/u2628.png' icon,2 isSite from channelinfo a,websiteinfo b ,companyinfo c,channelinfo d WHERE a.siteid = b.siteid and b.companyid = c.companyid and a.PARENTID = d.CHANNELID and a.status = 0 and b.status = 0
+    </select>
+
+
+</mapper>

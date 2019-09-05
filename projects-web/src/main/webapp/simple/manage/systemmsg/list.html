@@ -1,0 +1,109 @@
+﻿
+    <style>
+        .title{border-bottom: 1px solid #ccc;padding-bottom: 20px;margin-bottom: 20px;}
+        th .laytable-cell-1-options{text-align: center;}
+        th .laytable-cell-1-value{text-align: center;}
+        tr td{word-wrap: break-word;
+    word-break: normal;}
+    </style>
+
+    <div class="layui-fluid">
+        <div class="layui-card " style="padding-top: 20px; height: 797px;">
+            <div class="left" style="margin-left: 25px;float:left;">
+                <div class="application-info" style="width: 545px;">
+                        <div class="title">应用信息</div>
+                        <table class="layui-hide" id="test"></table>
+                    </div>
+                    <div class="db-info" style="width: 545px;padding-top: 30px;">
+                            <div class="title">数据库信息</div>
+                            <table class="layui-hide" id="test1"></table>
+                        </div>
+            </div>
+            <div class="right" style="margin-left: 40px;float:left">
+                    <div class="sys-info" style="width: 545px;">
+                            <div class="title">系统信息</div>
+                            <table class="layui-hide" id="test2"></table>
+                        </div>
+            </div>
+        </div>
+    </div>
+    <script>
+            
+            $(function () {
+       getSystemInfo();
+    })
+    function getSystemInfo() {
+        $.ajax({
+            type:'get',
+            url:'manage/system/getSystem',
+            dataType:'json',
+            success:function (data) {
+//                console.log(data.obj.system,data.obj.data);
+                layui.use('table', function(){
+              var table = layui.table;
+              
+              table.render({
+                elem: '#test'
+                ,data:[
+                    {options:"应用名称",value:""},
+                    {options:"应用版本",value:""},
+                    {options:"使用对象",value:""},
+                    {options:"基于框架",value:""},
+                    {options:"手册查看",value:""},
+                    {options:"特色描述",value:""}
+                ]
+                ,cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+                ,cols: [[
+                  {field:'options', width:146, title: '项'}
+                  ,{field:'value', width:395, title: '值'}
+                ]]
+              });
+              table.render({
+                elem: '#test1'
+                ,data:[
+                    {options:"数据库类型",value:data.obj.data.type},
+                    {options:"数据库版本",value:data.obj.data.version},
+                    {options:"数据库驱动版本",value:data.obj.data.drive},
+                    {options:"数据库地址",value:data.obj.data.address},
+                    {options:"用户名",value:data.obj.data.userName}
+                ]
+                ,cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+                ,cols: [[
+                  {field:'options', width:146, title: '项'}
+                  ,{field:'value', width:395, title: '值'}
+                ]]
+              });
+              table.render({
+                elem: '#test2'
+                ,data:[
+                    {options:"计算机名",value:data.obj.system.compaterName},
+                    {options:"用户名",value:data.obj.system.username},
+                    {options:"系统默认语言",value:data.obj.system.language},
+                    {options:"系统默认字符编码",value:data.obj.system.code},
+                    {options:"容器类型",value:data.obj.system.webAddress},
+                    {options:"Java安装目录",value:data.obj.system.javaEnvironment},
+                    {options:"WebServer运行目录",value:data.obj.system.webAddress},
+                    {options:"Java的运行环境版本",value:data.obj.system.javaEnvironment},
+                    {options:"操作系统的名称",value:data.obj.system.systemName},
+                    {options:"操作系统的构架",value:data.obj.system.framework},
+                    {options:"操作系统的版本",value:data.obj.system.systemVersion},
+                    {options:"CPU核心数",value:data.obj.system.cpuNum},
+                    {options:"Ip",value:data.obj.system.ip},
+                    {options:"Mac",value:data.obj.system.mac},
+                    {options:"虚拟机内存总量",value:data.obj.system.memorySum},
+                    {options:"虚拟机空闲内存量",value:data.obj.system.memoryFree},
+                    {options:'虚拟机使用最大内存量',value:data.obj.system.memoryUse}
+
+                ],
+                limit:20
+                ,cols: [[
+                  {field:'options', width:170, title: '项'}
+                  ,{field:'value', width:371, title: '值'}
+                ]]
+              });
+            });
+            }
+        })
+
+    }
+            </script>

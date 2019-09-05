@@ -1,0 +1,56 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+
+</head>
+<body>
+
+
+<div th:fragment="navMenu">
+    <div class="layui-side layui-side-menu" id="menu">
+    </div>
+    <script type="text/html" id="menuTemplate">
+        <div  class="layui-side-scroll">
+            <div class="layui-logo" lay-href=""> <span>集约化快速配置开发平台</span> </div>
+            <ul class="layui-nav layui-nav-tree" lay-filter="test">
+                {{# layui.each(d.obj, function(index, item){ }}
+                {{# if(item.children.length>0){ }}
+                <li class="layui-nav-item">
+                    <a><i class="layui-icon">{{item.photoUrl}}</i>&nbsp;&nbsp;{{item.name}}</a>
+                    <dl class="layui-nav-child">
+                        {{# layui.each(item.children, function(index1, item1){ }}
+                        {{# if(item1.children.length>0){ }}
+                        <dd><a>&emsp;&ensp;{{item1.name}}</a>
+                            <ol class="layui-nav-child">
+                                {{# layui.each(item1.children, function(index2, item2){ }}
+                                <li><a href="{{item2.url}}">&emsp;&ensp;&emsp;&ensp;{{item2.name}}</a></li>
+                                {{# }); }}
+                            </ol>
+                        </dd>
+
+                        {{# }else{ }}
+                        <dd><a href="{{item1.url}}">&emsp;&ensp;{{item1.name}}</a></dd>
+                        {{# } }}
+                        {{# }); }}
+                    </dl>
+                </li>
+                {{# }else{ }}
+                <li class="layui-nav-item">
+                    <a href="{{item.url}}"><i class="layui-icon">{{item.photoUrl}}</i>&nbsp;&nbsp;{{item.name}}</a>
+                </li>
+                {{# } }}
+                {{# }); }}
+            </ul>
+        </div>
+    </script>
+</div>
+
+
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,1569 @@
+﻿<title>站点管理</title>
+  <style>
+    .layui-colla-icon {left: 290px;position: absolute;}
+    .layui-colla-title{background-color: white;}
+    .layui-colla-title img{position: absolute;top:13px;}
+    .layui-colla-content img{margin-left: 50px;}
+    .layui-card select{background: #009986;color: #fff;padding-left: 5px;position: absolute;}
+    .layui-form [lay-ignore]{margin: 0;}
+    .layui-border-box {margin-top: 20px;}
+    .layui-table-view select[lay-ignore] {top:5px;}
+    .layui-card select option{background: #fff; color: black}
+    #demo8 .layui-laypage-skip{
+            margin-left: 50px!important;
+    }
+    .web {overflow-y: scroll;
+      height: 700px;}
+    .web .title span:first-child{display: inline-block;width: 8px;height: 17px; margin:20px 10px;}
+    .web .title span:last-child{font-family: '微软雅黑 Bold', '微软雅黑 Regular', '微软雅黑';font-size: 16px;font-weight: 700;    float: right;display: inline-block;
+      /* margin-left: 10px; */
+      margin: 16px 1160px 0 0px; width: 75px;}
+    .layui-tab-title li {
+      margin-left: 10px;
+    }
+
+    .white {
+      background: #ffffff;
+      color: green;
+    }
+
+    .black {
+      background: #B2B2B2;
+      color: #fff;
+    }
+
+    .layui-tab-item ul li {
+      width: 222px;
+      height: 184px;
+      border: 1px solid rgba(228, 228, 228, 1);
+      margin: 0 10px;
+      position: relative;
+      display: inline-block;
+      z-index: 1;
+    }
+
+    .layui-tab-item ul li .siteitem {
+      width: 222px;
+      height: 144px;
+      background: url("./img/u5307.png") no-repeat center center;
+      background-size: 69px 69px;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+    .siteitem .checkDiv{padding-left: 10px;padding-top:5px;}
+    .layui-tab-item ul li{position: relative;}
+    .layui-tab-item ul li:last-child button{
+      border: none;
+      background: url("./img/u5320.png") no-repeat center center;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translateX(-50%) translateY(-50%);
+    }
+    .chanelName {
+      text-align: center;
+      font-size: 18px;
+      font-weight: bolder;
+      position: absolute;
+      bottom: 0px;
+      width: 100%;
+    }
+
+    .bottom {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 40px;
+      width: 222px;
+      background: rgba(240, 240, 240, 1);
+    }
+    .bottom img {
+      margin: 10px;
+    }
+    .all{height: 38px!important;}
+    .input {margin-left: -4px;}
+    #info,.layui-card .layui-table-view {margin-top: 20px;}
+    #info tr td:first-child{text-align: right; background: #f5f5f5;}
+    #info tr td:last-child{ background: #ffffff;}
+    #info tr td{border: 1px solid #e7e7e7;}
+    #info tr td input{margin-left: 3px;}
+    .layui-card select:nth-of-type(2){margin-left: 15px;}
+    .rightList{margin: 15px 0}
+    .rightList span{margin-right: 20px; font-size: 20px;}
+    .rightList span:first-of-type{color:#009986;font-size: 24px;}
+    .right{background: url("./img/u6237.png") no-repeat;display: inline-block;width: 16px;height: 16px;}
+    .err{background: url("./img/u6239.png") no-repeat;width: 16px;height: 16px;display: inline-block;}
+    .layui-tab-item {position: relative;}
+    .layui-form select option{color: black;}
+    #input {margin-left: 20px;width:590px;height: 80px;}
+    #input label{position: relative; margin-right: 40px;}
+    #input label span{    display: inline-block; width: 80px;position: absolute; top: 7px;margin-left: 10px;}
+    #input .layui-form-checkbox[lay-skin=primary]{width: 18px;display: inline-block; margin-left: 20px;}
+    .layui-form select{height: 38px;background: #ffffff;color: #e6e6e6;width:345px;border: 1px solid #e6e6e6; }
+    .layui-form-radio{display: block;margin-left: -70px;}
+    .layui-form-item .layui-form-checkbox[lay-skin=primary] {margin: 0 10px;width: 20px;}
+    th .layui-table-cell{text-align: center}
+  </style>
+
+<div class="layui-card layadmin-header">
+  <div class="layui-breadcrumb" lay-filter="breadcrumb">
+    <a lay-href="">主页</a>
+    <a><cite>用户</cite></a>
+    <a><cite>后台管理员</cite></a>
+  </div>
+</div>
+
+<div class="layui-fluid">
+  <div class="layui-row layui-col-space12">
+    <div class="layui-col-md3 md3-left">
+      <div class="layui-card h100">
+        <div id="siteTree" class="layui-collapse"  lay-accordion="" lay-filter="test" style="overflow: auto;height: 800px;">
+        </div>
+      </div>
+    </div>
+    <div class="layui-col-md9 md3-right">
+      <div class="layui-card h100">
+        <div class="layui-card-body h100">
+          <div class="layui-tab" lay-filter="demo">
+            <div class="layui-tab-content" style="height: 735px">
+              <div id="main" class="layui-tab-item layui-show" style="position: relative">
+                <button id="upload" class="layui-btn layuiadmin-btn-admin">导入站点</button>
+                <button class="layui-btn layuiadmin-btn-admin" onclick="doexport()">导出站点</button>
+
+                <select id="changeId" name="city" lay-verify="required"  style="width: 116px;height: 38px;     position: absolute; margin-left: 5px;
+                                  top: 0px;" onclick="getChange()">
+                  <option value="更多" selected>更多</option>
+                  <option value="新建站点">新建站点</option>
+                  <option value="">修改这个站点</option>
+                  <option value="">删除站点</option>
+                  <option value="批量删除">批量删除</option>
+                </select>
+                <div class="rightbox" style="display: inline-block;width: 300px;height: 38px; overflow: hidden;position: absolute;right: 10px;">
+                  <select name="city" lay-verify="required" class="all">
+                    <option value="" disabled selected hidden>全部</option>
+                  </select>
+                  <form class="layui-form" action="" style="display: inline-block;margin-left: 65px">
+                    <div class="layui-form-item" style="display: inline-block">
+                      <div class="layui-input-block input">
+                        <input type="text" name="title" required  lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input" id="val">
+                      </div>
+                    </div>
+                  </form>
+                  <button class="layui-btn" style="margin-left:-5px" onclick="search()"><i class="layui-icon">&#xe615;</i></button>
+                </div>
+                <div class="web" id="ComAndSite" >
+                </div>
+
+              </div>
+              <div id="detail" class="layui-tab-item">
+                <!--<button id="upload" class="layui-btn layuiadmin-btn-admin">导入站点</button>-->
+                <!--<button class="layui-btn layuiadmin-btn-admin" onclick="doexport()">导出站点</button>-->
+                <!--<select name="city" lay-verify="required"  style="width: 116px;height: 38px;margin-left: 5px">-->
+                  <!--<option value="" disabled selected hidden>更多</option>-->
+                  <!--<option value="">新建站点</option>-->
+                  <!--<option value="">修改这个站点</option>-->
+                  <!--<option value="">删除站点</option>-->
+                  <!--<option value="">批量删除</option>-->
+                <!--</select>-->
+                <!--<div class="rightbox" style="display: inline-block;width: 300px;height: 38px; overflow: hidden;position: absolute;right: 10px;">-->
+                  <!--<select name="city" lay-verify="required" class="all">-->
+                    <!--<option value="" disabled selected hidden>全部</option>-->
+                  <!--</select>-->
+                  <!--<form class="layui-form" action="" style="display: inline-block;margin-left: 65px">-->
+                    <!--<div class="layui-form-item" style="display: inline-block">-->
+                      <!--<div class="layui-input-block input">-->
+                        <!--<input type="text" name="title" required  lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">-->
+                      <!--</div>-->
+                    <!--</div>-->
+                  <!--</form>-->
+                  <!--<button class="layui-btn" style="margin-left:-5px"><i class="layui-icon">&#xe615;</i></button>-->
+                <!--</div>-->
+                <table class="layui-table" lay-even="" lay-skin="row" id="info">
+                </table>
+              </div>
+              <div class="layui-tab-item">
+                <button class="layui-btn layuiadmin-btn-admin" style="margin-left: 20px;">新建工作流</button>
+                <button class="layui-btn layuiadmin-btn-admin">导入工作流</button>
+                <select name="city" lay-verify="required"  style="width: 116px;height: 38px;margin-left: 5px" class="more">
+                  <option value="" disabled selected hidden>更多</option>
+                  <option value="">新建站点</option>
+                  <option value="">修改这个站点</option>
+                  <option value="">删除站点</option>
+                  <option value="">批量删除</option>
+                </select>
+                <div class="rightbox" style="display: inline-block;width: 300px;height: 38px; overflow: hidden;position: absolute;right: 10px;">
+                  <select name="city" lay-verify="required" class="all">
+                    <option value="" disabled selected hidden>全部</option>
+                  </select>
+                  <form class="layui-form" action="" style="display: inline-block;margin-left: 65px">
+                    <div class="layui-form-item" style="display: inline-block">
+                      <div class="layui-input-block input">
+                        <input  type="text" name="title" required  lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                      </div>
+                    </div>
+                  </form>
+                  <button  class="layui-btn" style="margin-left:-5px"><i class="layui-icon">&#xe615;</i></button>
+                </div>
+                <table class="layui-hide" id="test1"></table>
+                <div id="demo6"></div>
+              </div>
+              <div class="layui-tab-item">
+                <button class="layui-btn layuiadmin-btn-admin" onclick="importUser()">引入用户</button>
+                <button class="layui-btn layuiadmin-btn-admin">引入角色</button>
+                <button class="layui-btn layuiadmin-btn-admin">编辑</button>
+                <button class="layui-btn layuiadmin-btn-admin">删除</button>
+                <div class="rightList">
+                  <span>站点操作权限</span>
+                </div>
+                <table class="layui-hide" id="test2"></table>
+                <div id="demo7"></div>
+              </div>
+              <div class="layui-tab-item" id="font">
+                <!--<select name="city" lay-verify="required"  style="width: 116px;height: 38px;">-->
+                  <!--<option value="" disabled selected hidden>站点发布</option>-->
+                  <!--<option value="">站点首页发布</option>-->
+                  <!--<option value="">站点增量发布</option>-->
+                  <!--<option value="">站点完全发布</option>-->
+                  <!--<option value="">站点更新发布</option>-->
+                <!--</select>-->
+                <button class="layui-btn layuiadmin-btn-admin" style="margin-left: 20ox;" onclick="reset()">还原</button>
+                <button class="layui-btn layuiadmin-btn-admin" onclick="clearAllSites()" type="button">清空回收站</button>
+                <!--<select name="city" lay-verify="required"  style="width: 116px;height: 38px;" class="more">-->
+                  <!--<option value="" disabled selected hidden>更多</option>-->
+                  <!--<option value="">新建站点</option>-->
+                  <!--<option value="">修改这个站点</option>-->
+                  <!--<option value="">删除站点</option>-->
+                  <!--<option value="">批量删除</option>-->
+                <!--</select>-->
+                <div class="rightbox" style="display: inline-block;width: 300px;height: 38px; overflow: hidden;position: absolute;right: 10px;">
+                  <select name="city" lay-verify="required" class="all">
+                    <option value="" disabled selected hidden>全部</option>
+                  </select>
+                  <form class="layui-form" action="#" style="display: inline-block;margin-left: 65px">
+                    <div class="layui-form-item" style="display: inline-block">
+                      <div class="layui-input-block input">
+                        <input id="delSiteName" type="text" name="title" required  lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                      </div>
+                    </div>
+                  </form>
+                  <button type="button" onclick="getDelSite(1,10)" class="layui-btn" style="margin-left:-5px"><i class="layui-icon">&#xe615;</i></button>
+                </div>
+                <table class="layui-hide" id="test3" lay-filter="test"></table>
+                <div id="demo8"></div>
+              </div>
+            </div>
+            <ul class="layui-tab-title" id="manage">
+              <li class="layui-this" id="first">站点管理</li>
+              <li lay-id="baseInfo" onclick="getSiteById(siteId)" id="infos">基本信息</li>
+              <li>工作流管理</li>
+              <li>权限管理</li>
+              <li onclick="getDelSite(1,10)">站点回收站</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--基本信息-->
+<script type="text/html" id="siteDetail">
+  {{#layui.each(d,function(index,item){}}
+  <colgroup>
+    <col width="50">
+    <col width="150">
+    <col>
+  </colgroup>
+  <tbody>
+  <tr>
+    <td>唯一标识：</td>
+    <td>{{item.code}}</td>
+  </tr>
+  <tr>
+    <td>显示名称：</td>
+    <td>{{item.name}}</td>
+  </tr>
+  <tr>
+    <td>站点目录名：</td>
+    <td>{{item.dataPath}}</td>
+  </tr>
+  <tr>
+    <td>站点http</td>
+    <td>{{item.webUrl}}</td>
+  </tr>
+  <tr>
+    <td>站点备注：</td>
+    <td>{{item.desc}}</td>
+  </tr>
+  <tr style="height: 92px;">
+    <td>LOGO图片：</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>SEO关键字：</td>
+    <td>{{item.seoKeyWord}}</td>
+  </tr>
+  <tr>
+    <td>SEO描述：</td>
+    <td>{{item.seoInfo}}</td>
+  </tr>
+  <tr>
+    <td>友情链接：</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>存放位置：</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>前一位置：</td>
+    <td>最前面</td>
+  </tr>
+  </tbody>
+  <!--{{#}) }}-->
+</script>
+<!--页面数据-->
+<script type="text/html" id="compSiteTempl">
+  <form class="layui-form">
+  {{#layui.each(d,function(index,item){}}
+
+  <div class="title">
+    <span class="layui-bg-green"></span>
+    <span >{{item.name}}</span>
+  </div>
+    <div class="layui-btn-container" style="margin: -50px 50px 0 0;float: right;" >
+      <button class="layui-btn layui-btn-sm"   id="add" type="button" onclick="add1()">添加</button>
+      <button class="layui-btn layui-btn-sm" type="button" onclick="editByIds()">修改</button>
+      <button class="layui-btn layui-btn-sm"  type="button" onclick="recycle()">删除</button>
+    </div>
+  <ul class="sites">
+    {{#layui.each(item.sites,function(index,item){}}
+
+    <li>
+      <div class="siteitem" action="">
+          <div class="checkDiv">
+            <input type="checkbox"  name="ids" lay-skin="primary" id="check" value="{{item.id}}">
+          </div>
+        <div class="chanelName">{{item.name}}</div>
+      </div>
+      <div class="bottom">
+        <img onclick="editSiteinfo('{{item.id}}')" src="img/u5722.png" alt="" srcset="" style="margin-left:65px">
+        <img onclick="getSiteById('{{item.id}}')" src="img/u5725.png" alt="" srcset="">
+        <img onclick="delSite('{{item.id}}',1)" src="img/u5729.png" alt="" srcset="">
+      </div>
+    </li>
+    {{#}) }}
+    <li>
+      <button onclick="add2('{{item.id}}')" type="button" class="layui-btn"></button>
+    </li>
+  </ul>
+  {{#}) }}
+  </form>
+</script>
+<!--目录树-->
+<script type="text/html" id="siteTempl">
+  {{#layui.each(d, function(index, item){ }}
+    <div class="layui-colla-item">
+        <h2 class="layui-colla-title">
+            <img src="/img/u5548.png">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{item.name}}
+        </h2>
+        {{#layui.each(item.sites,function(index,item){}}
+        <div class="layui-colla-content layui-show" onclick="getSiteById('{{ item.id }}')">
+            <img src="img/u5554.png" alt="" srcset="">
+            <span>{{item.name}}</span>
+        </div>
+      {{# }) }}
+    </div>
+  {{# }) }}
+</script>
+<script type="text/html"  id="siteTpl">
+  <div class="layui-tab" style="margin:0">
+    <ul class="layui-tab-title">
+      <li class="layui-this" style="margin-left:0">新建站点</li>
+      <li style="margin-left:0">高级设置</li>
+    </ul>
+    <div class="layui-tab-content">
+      <div class="layui-tab-item layui-show">
+        <form class="layui-form" lay-filter="siteForm">
+          <div class="layui-card">
+            <div class="layui-card-body">
+              <div class="layui-form-item">
+                <label class="layui-form-label">唯一标识:</label>
+                <div class="layui-input-block" style='width:345px;display:inline-block;margin-left:0'>
+                  <input type="text" name="code" required  lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                </div>
+                <span style="color:red">（英文）同一个站点只允许一个名称</span>
+              </div>
+              <div class="layui-form-item">
+                <label class="layui-form-label">显示名称:</label>
+                <div class="layui-input-block" style='width:345px'>
+                  <input type="text" name="name" required lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                </div>
+              </div>
+              <div class="layui-form-item">
+                <label class="layui-form-label">存放目录:</label>
+                <div class="layui-input-block" style='width:345px; display:inline-block; margin-left:0'>
+                  <input type="text" name="dataPath" required lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                </div>
+                <span style="color:red">（英文）请不要以符号/“开头</span>
+              </div>
+              <div class="layui-form-item">
+                <label class="layui-form-label" >站点http:</label>
+                <div class="layui-input-block" style='width:345px'>
+                  <input type="text" name="webUrl"  required lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                </div>
+              </div>
+              <div class="layui-form-item">
+                <label class="layui-form-label">组织机构:</label>
+                <div class="layui-input-block" style="width:345px">
+                  <select name="companyId" id="companys">
+                    <option value="" selected>请选择组织机构</option>
+                  </select>
+                </div>
+              </div>
+              <div class="layui-form-item">
+                <label class="layui-form-label">首页模板:</label>
+                <div class="layui-input-block" style="height: 30px;padding-top: 10px;cursor: pointer;">
+                  <i class="layui-icon layui-icon-app" onclick="select('首页')"></i>
+                  请选择模板
+                </div>
+              </div>
+              <div class="layui-form-item">
+                <label class="layui-form-label">细览模板:</label>
+                <div class="layui-input-block" style="height: 30px;padding-top: 10px;cursor: pointer;">
+                  <i class="layui-icon layui-icon-app" onclick="select('细览')"></i>
+                  请选择模板
+                </div>
+              </div>
+              <div class="layui-form-item">
+                <label class="layui-form-label">前一个站点:</label>
+                <div class="layui-input-block" style="width:345px">
+                  <select name="siteOrder">
+                    <option value="" disabled selected hidden>请选择</option>
+                    <option value="">————最前面————</option>
+                    <option value="0">中科院档案馆</option>
+                    <option value="1">————最后面————</option>
+                  </select>
+                </div>
+              </div>
+              <div class="layui-form-item">
+                <div class="layui-input-block" style="margin-left: 135px;">
+                  <button type="button" class="layui-btn" lay-submit lay-filter="addMetadata">确定</button>
+                  <button type="button" class="layui-btn layui-btn-primary" onclick="layer.closeAll();">取消</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <input type="hidden" id="homeTemplateId" name="homeTemplateId">
+          <input type="hidden" id="detailTemplateId" name="detailTemplateId">
+          <input type="hidden" name="id">
+          <input type="hidden" name="parentId" value="0">
+        </form>
+      </div>
+      <div class="layui-tab-item">
+        <form action="" class='layui-form'>
+          <div class="layui-form-item">
+            <label style='color:#009986;font-size:18px;font-weight:bolder;margin-left:10px'>可发布文档的状态</label>
+            <div class="layui-input-block" id='input'>
+              <label><input type="checkbox" name="like1[write]" lay-skin="primary" title="再审"></label>
+              <label><input type="checkbox" name="like1[read]" lay-skin="primary" title="撤销审批中"></label>
+              <label><input type="checkbox" name="like1[game]" lay-skin="primary" title="已受理"></label>
+              <label><input type="checkbox" name="like1[write]" lay-skin="primary" title="未受理"></label>
+              <label><input type="checkbox" name="like1[read]" lay-skin="primary" title="正审"></label>
+              <label><input type="checkbox" name="like1[game]" lay-skin="primary"  title=" 已签"></label>
+              <label><input type="checkbox" name="like1[write]" lay-skin="primary" title="已发"></label>
+              <label><input type="checkbox" name="like1[read]" lay-skin="primary" title="已编"></label>
+              <label><input type="checkbox" name="like1[game]" lay-skin="primary"  title="新稿"></label>
+            </div>
+          </div>
+          <div class="layui-form-item">
+            <span style="font-size:18px;margin-left:30px;">文档被引用到当前站点后的状态:</span>
+            <div class='layui-input-block' style="width:190px;display:inline-block;margin-left:10px">
+              <select name="aa" id="">
+                <option value="0" selected>新稿</option>
+                <option value="1">已编</option>
+                <option value="2">返工</option>
+                <option value="3">已否</option>
+                <option value="4">已签</option>
+                <option value="5">正审</option>
+              </select>
+            </div>
+          </div>
+          <div class="layui-form-item">
+            <label style='color:#009986;font-size:18px;font-weight:bolder;margin-left:10px'>文档发布计划</label>
+            <div class="layui-input-block">
+              <input type="radio" name="sex" value="不设置计划发布" title="不设置计划发布">
+              <input type="radio" name="sex" value="每天运行一次" title="每天运行一次">
+              <input type="radio" name="sex" value="每天运行多次" title="每天运行多次" >
+            </div>
+          </div>
+          <div class="layui-form-item">
+            <div style='color:#009986;font-size:18px;font-weight:bolder;margin-left:10px'>发布模板</div>
+            <label class="layui-form-label" style='width:130px;font-size:18px;'>其他概览模板:</label>
+            <div class="layui-input-block" style="height: 30px;padding-top: 10px;cursor: pointer;">
+              <i class="layui-icon layui-icon-app" data-method="select"></i>
+              请选择模板
+            </div>
+            <!-- <div class="layui-input-block" style="height: 30px;padding-top: 10px;cursor: pointer;margin-left:10px;width:500px;display:inline-block;line-height:30px;">
+                <input type="checkbox" name="like1[write]" lay-skin="primary">
+                <span>发布后仅显示指定时间开始撰写的文档</span>
+            </div>     -->
+          </div>
+          <div class="layui-form-item">
+            <span style="font-size:18px;margin-left:30px;">页面编码:</span>
+            <div class='layui-input-block' style="width:190px;display:inline-block;margin-left:10px">
+              <select name="aa" id="">
+                <option value="0" selected>utf-8</option>
+                <option value="1">简体中文</option>
+                <option value="2">英语</option>
+                <option value="3">法语</option>
+              </select>
+            </div>
+          </div>
+          <div class="layui-form-item">
+            <div class="layui-input-block" style="margin-left: 135px;">
+              <button type="button" class="layui-btn" lay-submit lay-filter="addMetadata">确定</button>
+              <button type="button" class="layui-btn layui-btn-primary" onclick="layer.closeAll();">取消</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</script>
+<script type="text/html"  id="siteTpl1">
+
+        <form class="layui-form" lay-filter="siteForm">
+          <div class="layui-card">
+            <div class="layui-card-body">
+              <div class="layui-form-item">
+                <label class="layui-form-label">唯一标识:</label>
+                <div class="layui-input-block" style='width:345px;display:inline-block;margin-left:0'>
+                  <input type="text" name="code" required  lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                </div>
+                <span style="color:red">（英文）同一个站点只允许一个名称</span>
+              </div>
+              <div class="layui-form-item">
+                <label class="layui-form-label">显示名称:</label>
+                <div class="layui-input-block" style='width:345px'>
+                  <input type="text" name="name" required lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                </div>
+              </div>
+              <div class="layui-form-item">
+                <label class="layui-form-label">存放目录:</label>
+                <div class="layui-input-block" style='width:345px; display:inline-block; margin-left:0'>
+                  <input type="text" name="dataPath" required lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                </div>
+                <span style="color:red">（英文）请不要以符号/“开头</span>
+              </div>
+              <div class="layui-form-item">
+                <label class="layui-form-label" >站点http:</label>
+                <div class="layui-input-block" style='width:345px'>
+                  <input type="text" name="webUrl"  required lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                </div>
+              </div>
+              <div class="layui-form-item">
+                <label class="layui-form-label">组织机构:</label>
+                <div class="layui-input-block" style="width:345px">
+                  <select name="companyId" id="companys">
+                    <option value="" selected>请选择组织机构</option>
+                  </select>
+                </div>
+              </div>
+              <div class="layui-form-item">
+                <label class="layui-form-label">首页模板:</label>
+                <div class="layui-input-block" style="height: 30px;padding-top: 10px;cursor: pointer;">
+                  <i class="layui-icon layui-icon-app" onclick="select('首页')"></i>
+                  请选择模板
+                </div>
+              </div>
+              <div class="layui-form-item">
+                <label class="layui-form-label">细览模板:</label>
+                <div class="layui-input-block" style="height: 30px;padding-top: 10px;cursor: pointer;">
+                  <i class="layui-icon layui-icon-app" onclick="select('细览')"></i>
+                  请选择模板
+                </div>
+              </div>
+              <div class="layui-form-item">
+                <label class="layui-form-label">前一个站点:</label>
+                <div class="layui-input-block" style="width:345px">
+                  <select name="siteOrder">
+                    <option value="" disabled selected hidden>请选择</option>
+                    <option value="">————最前面————</option>
+                    <option value="0">中科院档案馆</option>
+                    <option value="1">————最后面————</option>
+                  </select>
+                </div>
+              </div>
+              <div class="layui-form-item">
+                <div class="layui-input-block" style="margin-left: 135px;">
+                  <button type="button" class="layui-btn" lay-submit lay-filter="addMetadata">确定</button>
+                  <button type="button" class="layui-btn layui-btn-primary" onclick="layer.closeAll();">取消</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <input type="hidden" id="homeTemplateId1" name="homeTemplateId">
+          <input type="hidden" id="detailTemplateId1" name="detailTemplateId">
+          <input type="hidden" name="id">
+        </form>
+      </div>
+
+        </form>
+</script>
+<script type="text/html" id="tempContent">
+<div>
+  {{# layui.each(d,function(index,item){   }}
+   <div>
+     <input type="radio" name="siteid" value="{{item.id}}" >
+     <label>{{item.tempname}}</label>
+   </div>
+  {{#})  }}
+  <div class="layui-input-block" style="margin-left: 135px;">
+    <button type="button" class="layui-btn" onclick="selectHomeTem(item.temptype)">确定</button>
+    <button type="button" class="layui-btn layui-btn-primary" onclick="layer.close();">取消</button>
+  </div>
+</div>
+</script>
+
+<!--操作列模板-->
+<script type="text/html" id="barDemo">
+  <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="reset">还原</a>
+  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delete">删除</a>
+</script>
+
+<!--弹出层模板（新增，查看，编辑）-->
+<script type="text/html"  id="fieldTemplate">
+  <form class="layui-form" lay-filter="fieldForm">
+    <div class="layui-card">
+      <div class="layui-card-body">
+        <div class="layui-form-item">
+          <label class="layui-form-label">元数据表名</label>
+          <div class="layui-input-block">
+            <input type="text"  placeholder="" value="{{d.tablename?d.tablename:''}}" readonly name="tablename" autocomplete="off" class="layui-input">
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">中文名称</label>
+          <div class="layui-input-block">
+            <input type="text" name="anothername" value="{{d.anothername?d.anothername:''}}" class="layui-input" required lay-verify="required">
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">英文名称</label>
+          <div class="layui-input-block">
+            <input type="text" name="fieldname" value="{{d.fieldname?d.fieldname:''}}" class="layui-input" required lay-verify="required">
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">字段类型</label>
+          <div class="layui-input-block">
+            <select name="fieldtype" id="fieldtype" value="{{d.fieldtype?d.fieldtype:''}}" class="layui-input" required lay-verify="required">
+              <option>--请选择--</option>
+            </select>
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">库中类型</label>
+          <div class="layui-input-block">
+            <select name="dbtype" id="dbtype" value="{{d.dbtype?d.dbtype:''}}" class="layui-input" required lay-verify="required">
+              <option>--请选择--</option>
+            </select>
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">库中长度</label>
+          <div class="layui-input-block">
+            <input type="text" name="dblength" value="{{d.dblength?d.dblength:''}}" class="layui-input" required lay-verify="required">
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">选择分组</label>
+          <div class="layui-input-block">
+            <input type="text" name="groupid" value="{{d.groupid?d.groupid:''}}" class="layui-input" required lay-verify="required">
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">是否启用</label>
+          <div class="layui-input-block">
+            <input type="text" name="hiddenfield" value="{{d.hiddenfield?d.hiddenfield:''}}" class="layui-input" required lay-verify="required">
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">字段默认值</label>
+          <div class="layui-input-block">
+            <input type="text" name="defaultvalue" value="{{d.defaultvalue?d.defaultvalue:''}}" class="layui-input" required lay-verify="required">
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">是否非空</label>
+          <div class="layui-input-block">
+            <input type="text" name="notnull" value="{{d.notnull?d.notnull:''}}" class="layui-input" required lay-verify="required">
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <div class="layui-input-block">
+            <button class="layui-btn" lay-submit="" lay-filter="addFieldinfo">立即提交</button>
+            <button type="button" class="layui-btn layui-btn-primary" onclick="layer.closeAll();">关闭</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <input type="hidden" name="tableid" value="{{d.tableid?d.tableid:''}}" id="tableid">
+    <input type="hidden" name="id" value="{{d.id?d.id:''}}">
+  </form>
+</script>
+
+<script>
+  var str=''
+  var siteIndex;
+  var selectIndex,siteObj;
+  $(function () {
+       getSiteTree();
+  })
+  function  clearAllSites() {
+//      console.log(siteObj);
+      if(siteObj.length === 0) return;
+//      debugger;
+      layer.alert("确认清空回收站吗？",function () {
+         clearSites()
+      })
+  }
+  function clearSites(){
+     ajax('/manage/site/del','post').then(res=>{
+        if(res.success){
+            layer.closeAll();
+            getDelSite(1,10);
+      }
+     })
+  }
+  function  importUser() {
+      layer.open({
+          type: 1,
+          area: ['905px', '820px'],
+          title:'引入用户',
+          maxmin: true,
+          content: '<div id="putUserView"></div>'
+      });
+  }
+  function recycle() {
+      var data = document.getElementsByName("ids")
+      var ids="";
+      var count=0;
+      for (var i in data){
+          if (data[i].checked){
+              if (count!==0){
+                  ids+=",";
+              }
+              ids+=data[i].value;
+              count++;
+
+          }
+
+      }
+      if (ids===""){
+          layer.alert("请选择要回收的数据")
+          return false;
+      }else{
+          delSite(ids,1);
+      }
+  }
+  function search() {
+//      console
+      var keyword = $("#val").val();
+
+      if (keyword) {
+          var Json = {
+              entity: {
+                  name: keyword
+              },
+              pager: {current: 1, size: 10}
+          }
+
+      ajax("/manage/site/list", "post", JSON.stringify(Json)).then(res => {
+          console.log(res);
+          if(res.success){
+              var data = [{name:"",sites:res.obj.records}];
+             searchPage(data)
+          }
+  }).
+      catch(res => {}
+  )
+       }else{
+          getSiteTree()
+      }
+
+  }
+
+  layui.form.on("submit(addMetadata)",function (data) {
+      console.log(data.field);
+      var id=data.field.id;
+      if(id===""||id===null){
+          var type = "post";
+          var url = "/manage/site";
+          var msg="添加成功";
+      }
+      else{
+         type="put";
+         url="/manage/site/"+id;
+         msg="修改成功";
+      }
+      ajax(url,type,JSON.stringify(data.field)).then(res=>{
+          if(res.success){
+            layer.close(siteIndex);
+            getSiteTree();
+
+          }else{
+              layer.alert(res.msg)
+      }
+      }).catch(res=>{
+      })
+      return false;
+  })
+ function operate(val) {
+     alert(1);
+
+ }
+  //获取扩展字段
+  function getExtField(pageNo,size) {
+      var jsondata = {
+          "pager":{"current":pageNo,"size":size},
+          "entity":{"status":1,"fieldname":document.getElementById("fieldId").value}
+      }
+      $.ajax({
+          type:"post",
+          url:"/manage/extendField/list",
+          contentType:'application/json',
+          data:JSON.stringify(jsondata),
+          dataType: 'json',
+          success: function(data){
+              if(data.success&&data.obj.records.length>0){
+                  layui.use(['laypage','table'], function(){
+                      var table = layui.table
+                          ,laypage=layui.laypage;
+                      table.render({
+                          elem: '#test'
+                          ,data:data.obj.records
+                          ,cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+                          ,cols: [[
+                              {type: 'checkbox',width:90,fixed:"left"}
+                              ,{field:'id', width:100, title: '序号', align: "center"}
+                              ,{field:'fieldname', width:150, title: '显示名称', align: "left"}
+                              ,{field:'tablename', width:150, title: '所属对象', align: "left"}
+                              ,{field:'fieldname', width:150, title: '字段名称', align: "left"}
+                              ,{field:'crUser', title: '字段类型', width: 150, align: "left"}
+                              ,{field:'createBy', width:80, title: '创建者', align: "left"}
+                              ,{field:'createTime', width:150, title: '创建时间', align: "left"}
+                              ,{field:'', width:170, title: '操作',toolbar: '#barDemo'}
+                          ]]
+                      });
+                      table.on('row(LAY-app-content-tags)', function(obj){
+                          var data = obj.data;
+                          //标注选中样式
+                          obj.tr.addClass('layui-table-click').siblings().removeClass('layui-table-click');
+                      });
+                      laypage.render({
+                          elem: 'demo5'
+                          ,count: data.obj.total
+                          ,curr:data.obj.current
+                          ,limit:data.obj.size
+                          ,layout: ['count', 'prev', 'page', 'next', 'limit', 'refresh', 'skip']
+                          ,jump: function(obj,first){
+                              if(!first){
+                                  pageNo=obj.curr
+                                  size=obj.limit
+                                  getExtField(pageNo,size)
+                              }
+
+                          }
+                      });
+                  });
+              }
+          },
+          error: function() {
+              alert("出错啦!!!")
+          }
+      })
+  }
+
+  //删除扩展字段
+  function delExtField(id) {
+    $.ajax({
+        type:"delete",
+        url:"/manage/extendField/"+id,
+        dataType:"json",
+        success:function (data) {
+            layer.alert(data.msg)
+            getExtField(1,10)
+        },
+        error:function (data) {
+            layer.alert(data.msg)
+        }
+    })
+  }
+
+  //选择模板
+  function select(type) {
+      var jsondata;
+      if(type==='首页'){
+          jsondata={
+              "pager":{
+                  current:1,
+                  size:10
+              },
+              "entity":{
+                  "temptype":1
+              }
+          }
+      }else{
+          jsondata={
+              "pager":{
+                  current:1,
+                  size:10
+              },
+              "entity":{
+                  "temptype":2
+              }
+          }
+      }
+
+      $.ajax({
+          type:'post',
+          url:'/manage/template/list',
+          contentType:'application/json',
+          data:JSON.stringify(jsondata),
+          dataType:'json',
+          success:function (data) {
+              console.log(data.obj.records)
+              selectIndex = layer.open({
+                  type:1,
+                  title:'选择'+type+'模板',
+                  area:['800px','600px'],
+                  maxmin:false,
+                  content:'<div id="templateDiv"></div>'
+              })
+              layui.laytpl($("#tempContent").html()).render(data.obj.records,function (html) {
+                  $("#templateDiv").html(html)
+              })
+          }
+      })
+
+  }
+
+  function selectHomeTem(tempType) {
+     var temId =$('input:radio:checked').val();
+     console.log(tempType)
+      if (tempType===1){
+          $("#homeTemplateId").attr('value',temId)
+      }else{
+          $("#detailTemplateId").attr('value',temId)
+      }
+      layer.close(selectIndex);
+  }
+
+  //下拉框选中事件
+  function getChange() {
+     var obj= document.getElementById("changeId");
+     var value=obj.options[obj.selectedIndex].value;
+     if(value==='新建站点'){
+         add({});
+     }
+     if(value==='批量删除'){
+        delByIds();
+     }
+     obj.value="更多";
+  }
+  //批量删除
+  function delByIds() {
+     var data = document.getElementsByName("ids")
+     var ids="";
+     var count=0;
+     for (var i in data){
+         if (data[i].checked){
+             if (count!==0){
+                 ids+=",";
+             }
+             ids+=data[i].value;
+             count++;
+
+         }
+
+     }
+     if (ids===""){
+         layer.alert("请选择要删除的数据")
+         return false;
+     }
+     //console.log(ids)
+      if(confirm("是否确定删除")){
+         var dataIds={
+             "ids":ids
+         }
+          $.ajax({
+              type:"get",
+              url:"/manage/site/delByIds",
+              contentType:"application/json",
+              data:dataIds,
+              dataType:"json",
+              success:function (data) {
+//                  layer.alert(data.msgConfig)
+                  getSiteTree();
+                  layer.closeAll();
+                  getDelSite(1,10);
+              },
+              error:function (data) {
+                  layer.alert(data.msg)
+              }
+          })
+      }
+
+  }
+
+  //修改站点
+  function editByIds() {
+      var data = document.getElementsByName("ids")
+      var ids="";
+      var count=0;
+      for (var i in data){
+          if (data[i].checked){
+              if (count!==0){
+                  ids+=",";
+              }
+              ids+=data[i].value;
+              count++;
+
+          }
+
+      }
+      if (ids===""){
+          layer.alert("请选择要修改的数据")
+          return false;
+      }
+
+      editSiteinfo("",ids)
+
+
+  }
+  function editSiteinfo(id,ids) {
+//      判断修改单个还是多个
+      var id1 = id?id:ids;
+    if(ids&&id1.split(",").length>1){
+        layer.alert('不允许同时修改多个站点');
+        return;
+    }
+            $.ajax({
+               type:"get",
+               url:"/manage/site/getSiteById/"+id1,
+               dataType:"json",
+               success:function (data){
+                   if(data.success){
+                       editSite(id1,data.obj)
+                       siteIndex = layer.open({
+                           type: 1,
+                           area: ['800px', '582px'],
+                           shade: 0.3,
+                           title:false,
+                           maxmin: false,
+                           content: '<div id="siteFormDiv"></div>'
+                       })
+                       layui.laytpl($("#siteTpl").html()).render({}, function(html){
+                           $("#siteFormDiv").html(html);
+                           ajax("/manage/company/list","post",JSON.stringify({pager:{current:1,size:10}})).then(res=>{
+                               var records = res.obj.records;
+                               var companys;
+                               for(var i in records){
+                                   companys += '<option value="'+records[i].id+'">'+records[i].name+'</option>'
+                               }
+                               $("#companys").append(companys);
+
+                                 layui.form.val("siteForm",data.obj);
+                                 layui.form.render();
+                             })
+                       })
+                   }else{
+                       layer.alert(data.msg);
+                   }
+               }
+            })
+  }
+  function editSite(id,data) {
+      console.log(id,data);
+      $.ajax({
+           type:"put",
+           url:"/manage/site/"+id,
+           dataType:"json",
+          contentType: 'application/json',
+          data: JSON.stringify(data),
+           success:function (res) {
+              console.log(res)
+
+
+          },
+          error:function (data) {
+              console.log(data.msg)
+          }
+      })
+  }
+
+  //删除站点
+  function delSite(delId,status) {
+      $.ajax({
+          type:"get",
+          url:"/manage/site/updateStatus?ids="+delId+"&status="+status,
+          dataType:"json",
+          success:function (data) {
+              getSiteTree();
+              getDelSite(1,10)
+              layer.closeAll();
+          },
+          error:function (data) {
+              layer.alert(data.msg)
+          }
+      })
+  }
+
+  //根据id获取站点信息
+  function getSiteById(id) {
+     $.ajax({
+         type:"GET",
+         url:"/manage/site/getSiteById/"+id,
+         dataType:"json",
+         success:function (data) {
+            if(data.success){
+              console.log(data);
+                var d=[];
+                d.push(data.obj);
+              console.log(d);
+                layui.laytpl($("#siteDetail").html()).render(d,function(html){
+                    $("#info").html(html);
+                    layui.form.render();
+                })
+                document.getElementById("main").className="layui-tab-item";
+                document.getElementById("detail").className="layui-tab-item layui-show";
+                $("#infos").addClass("layui-this");
+                $("#first").removeClass("layui-this");
+            }else{
+                layer.alert(data.msg);
+            }
+             //layer.element.tabChange('demo','baseInfo');
+
+         },
+         error:function (data) {
+             console.log(data.msg)
+         }
+     })
+
+  }
+  function add1() {
+//      alert(1)
+      siteIndex = layer.open({
+          type: 1,
+          area: ['800px', '582px'],
+          shade: 0.3,
+          title:"添加站点",
+          maxmin: false,
+          content: '<div id="siteFormDiv"></div>'
+      })
+      layui.laytpl($("#siteTpl1").html()).render({}, function(html) {
+          $("#siteFormDiv").html(html);
+          layui.form.render();
+      })
+      ajax("/manage/company/list","post",JSON.stringify({pager:{current:1,size:10}})).then(res=>{
+          var records = res.obj.records;
+      var companys;
+      for(var i in records){
+          companys += '<option value="'+records[i].id+'">'+records[i].name+'</option>'
+      }
+      $("#companys").append(companys);
+
+
+      layui.form.val("siteForm",res.obj);
+      layui.form.render();
+  })
+  }
+  function add2(id){
+    var that=this;
+   siteIndex = layer.open({
+      type: 1,
+      area: ['800px', '582px'],
+      shade: 0.3,
+      title:false,
+      maxmin: false,
+      content: '<div id="siteFormDiv"></div>'
+    })
+    layui.laytpl($("#siteTpl").html()).render({}, function(html){
+      $("#siteFormDiv").html(html);
+      ajax("/manage/company/list","post",JSON.stringify({pager:{current:1,size:10}})).then(res=>{
+        var records = res.obj.records;
+        var companys;
+        for(var i in records){
+          companys += '<option value="'+records[i].id+'">'+records[i].name+'</option>'
+        }
+        $("#companys").append(companys);
+
+        layui.form.val("siteForm",{companyId:id});
+        layui.form.render();
+      })
+    })
+  }
+
+   //获取站点树
+   function getSiteTree() {
+       $.ajax({
+           type:"GET",
+           url:"/manage/site/getSiteTree",
+           contentType:"application/json",
+           dataType:"json",
+           success:function (data) {
+               //站点树
+              console.log(data);-
+               layui.laytpl($("#siteTempl").html()).render(data.obj,function(html){
+                   $("#siteTree").html(html);
+                   layui.use(['element', 'layer'], function(){
+                       var element = layui.element;
+                       element.render('collapse');
+                   });
+
+               })
+               //主页面
+               layui.laytpl($("#compSiteTempl").html()).render(data.obj,function(html){
+                       $("#ComAndSite").html(html);
+                       layui.form.render();
+               })
+              siteId=data.obj[0].sites[0].id;
+
+           },
+           error:function (data) {
+               console.log(data.msg)
+           }
+       })
+   }
+
+  function searchPage(data) {
+    console.log(data)
+    layui.laytpl($("#compSiteTempl").html()).render(data,function(html){
+        $("#ComAndSite").html(html);
+        layui.form.render();
+    })
+}
+    //获取回收站数据
+  function getDelSite(pageNo,size) {
+      var jsondata = {
+          "pager":{"current":pageNo,"size":size},
+          "entity":{"status":1,"name":document.getElementById("delSiteName").value}
+      }
+      $.ajax({
+          type:"post",
+          url:"manage/site/getDelList",
+          contentType:'application/json',
+          data:JSON.stringify(jsondata),
+          dataType: 'json',
+          success: function(data){
+              console.log(data)
+              if(data.success||data.obj.records.length>0){
+                  siteObj=data.obj.records;
+                  for(var i in data.obj.records){
+                     if(str.length!== 0){
+                         str+=','
+                     }
+                      str+=data.obj.records[i].id;
+                  }
+//                  alert(str);
+                  layui.use(['laypage','table'], function(){
+                      var table = layui.table
+                          ,laypage=layui.laypage;
+                      table.render({
+                          elem: '#test3'
+                          ,data:data.obj.records
+                          ,cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+                          ,cols: [[
+                              {type:'checkbox',field:"id"}
+                              ,{type:'numbers',title:'序号',align:"center"}
+                              ,{field:'name', title: '显示名称',align:'left'}
+                              ,{field:'code', title: '唯一标识',align:'left'}
+                              ,{field:'dataPath',title:'原位置',align:'left'}
+                              ,{field:'modify_by',title:'删除者',align:'left'}
+                              ,{field:'look', width:195, title: '操作',toolbar: '#barDemo',align:"center"}
+                          ]]
+                      });
+                      table.on('row(LAY-app-content-tags)', function(obj){
+                          var data = obj.data;
+                          //标注选中样式
+                          obj.tr.addClass('layui-table-click').siblings().removeClass('layui-table-click');
+                      });
+                      layui.table.on('tool(test)', function(obj){ //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
+                          var data = obj.data; //获得当前行数据
+                          var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+                          var tr = obj.tr; //获得当前行 tr 的DOM对象
+                           console.log(data);
+                          if(layEvent === 'delete'){ //查看
+                              layer.alert("确定删除:["+data.name+"]?",function(){
+                                 delsiteTrue(data.id)
+
+                              })
+                          }else if(layEvent === 'reset'){
+                              layer.alert("确定还原:["+data.name+"]?",function(){
+//                                  delExtField([data.id]);
+                                  resetSite(data.id,0);
+                              })
+                          }
+
+                  });
+                      laypage.render({
+                          elem: 'demo8'
+                          ,count: data.obj.total
+                          ,curr:data.obj.current
+                          ,limit:data.obj.size
+                          ,layout: ['count', 'prev', 'page', 'next', 'limit', 'refresh', 'skip']
+                          ,jump: function(obj,first){
+                              if(!first){
+                                  pageNo=obj.curr
+                                  size=obj.limit
+                                  getDelSite(pageNo,size)
+                              }
+
+                          }
+                      });
+                  });
+              }
+          },
+          error: function() {
+              alert("出错啦!!!")
+          }
+      })
+  }
+  function reset(){
+      var data = checkChecked('test3');
+      if(data){
+         delSite(data,0);
+      }
+  }
+  function delsiteTrue(delId) {
+      $.ajax({
+          type:"delete",
+          url:"/manage/site/"+delId,
+          dataType:"json",
+          success:function (data) {
+              if(data.success){
+                  layer.closeAll();
+                  getDelSite(1,10);
+              }else{
+                  layer.alert(data.msg);
+              }
+          },
+          error:function (data) {
+              layer.alert(data.msg)
+          }
+      })
+  }
+  function resetSite(id,status) {
+     delSite(id,status);
+  }
+    <!--导出站点-->
+    function doexport() {
+        window.location.href="/manage/site/export?current=1&size=10";
+    }
+  function  selectById(id) {
+     $.ajax({
+         type:"POST",
+         url:"/manage/limitRelation/siteList"+id,
+         dataType:"json",
+         success:function () {
+             
+         }
+
+     })
+  }
+  //导入站点
+  layui.use('upload', function(){
+      var upload = layui.upload;
+
+      //指定允许上传的文件类型
+      upload.render({
+          elem: '#upload'
+          ,url: '/manage/site/import'
+          ,accept: 'file' //普通文件
+          ,done: function(res){
+          }
+      });
+  });
+
+  layui.use(['laypage', 'layer'], function(){
+    var laypage = layui.laypage
+            ,layer = layui.layer;
+    laypage.render({
+      elem: 'demo5'
+      ,count: 8
+      ,layout: ['count', 'prev', 'page', 'next', 'limit', 'refresh', 'skip']
+      ,jump: function(obj){
+      }
+    });
+    laypage.render({
+      elem: 'demo6'
+      ,count: 5
+      ,layout: ['count', 'prev', 'page', 'next', 'limit', 'refresh', 'skip']
+      ,jump: function(obj){
+      }
+    });
+    laypage.render({
+      elem: 'demo7'
+      ,count: 8
+      ,layout: ['count', 'prev', 'page', 'next', 'limit', 'refresh', 'skip']
+      ,jump: function(obj){
+      }
+    });
+    laypage.render({
+      elem: 'demo8'
+      ,count: 5
+      ,layout: ['count', 'prev', 'page', 'next', 'limit', 'refresh', 'skip']
+      ,jump: function(obj){
+      }
+    });
+  })
+  layui.use('form', function(){//声明使用layUI的form
+    var form = layui.form;
+    form.render();//刷新所有渲染效果，也可以单独熟悉某个效果
+    //监听提交
+    form.on('submit(formDemo)', function(data){
+      layer.msg(JSON.stringify(data.field));
+      return false;
+    });
+  });
+
+  active.addExtField = function () {
+      layer.open({
+          type: 1,
+          title: "新建扩展字段",
+          area: ['550px', '670px'],
+          shade: 0,
+          maxmin: true,
+          content: '<div id="fieldForm"></div>',
+          cancel: function(){
+
+          }
+      });
+      layui.laytpl($("#fieldTemplate").html()).render({tableid:metadataObj.id,tablename:metadataObj.name}, function(html){
+          $("#fieldForm").html(html)
+      });
+  };
+  //监听操作列工具条
+  layui.table.on('tool(test)', function(obj){ //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
+      var data = obj.data; //获得当前行数据
+      var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+      var tr = obj.tr; //获得当前行 tr 的DOM对象
+
+      if(layEvent === 'delete'){ //查看
+          layer.alert("确定删除:["+data.fieldname+"]",function(){
+              delExtField([data.id]);
+          })
+      }
+  });
+
+  layui.use('table', function(){
+    var table = layui.table;
+    table.render({
+      elem: '#test1'
+      ,data:[
+        {number:1,type:"业务部门人才招聘栏目发文工作流",name:"业务部门人才招聘栏目发文工作流",location:"中科院[站点-10]",updators:"2019-01-09 16:52:15",time:"admin",look:""},
+        {number:2,type:"业务部门党建工作栏目发文工作流",name:"业务部门党建工作栏目发文工作流",location:"中科院[站点-10]",updators:"2019-01-08 15:12:15",time:"admin",look:""},
+        {number:3,type:"业务部门国标意见征求栏目发文工作流",name:"业务部门国标意见征求栏目发文工作流",location:"中科院[站点-10]",updators:"2019-01-08 10:52:36",time:"admin",look:""},
+        {number:4,type:"职能部门发文工作流",name:"",location:"中科院[站点-10]",updators:"2019-01-07 14:52:00",time:"admin",look:""},
+        {number:5,type:"业务部门综合新闻栏目发文工作流",name:"业务部门综合新闻栏目发文工作流",location:"中科院[站点-10]",updators:"2019-01-07 10:12:15",time:"admin",look:""}
+      ]
+      ,cols: [[
+        {type:'checkbox'}
+        ,{field:'number', width:90, title: '序号',align:"center"}
+        ,{field:'type', width:317, title: '工作流名称',align:"left"}
+        ,{field:'name', width:300, title: '工作流描述',align:"left"}
+        ,{field:'location', width:140, title: '所属位置',align:"left"}
+        ,{field:'updators', title: '创建时间', width: 180,align:"left"}
+        ,{field:'time', width:100, title:'创建者',align:"left"}
+        ,{field:'look', width:100, title: '配置情况',templet:"#pic1",align:"left"}
+      ]]
+    });
+    table.render({
+      elem: '#test2'
+      ,data:[
+        {id:1,username:"用户组",sex:"办公室",city:"1",sign:"1",experience:"0",score:"1",classify:"1",wealth:"1",classifys:"1",wealths:"1"},
+        {id:2,username:"用户",sex:"分院",city:"0",sign:"0",experience:"0",score:"0",classify:"0",wealth:"0",classifys:"0",wealths:"0"},
+        {id:3,username:"用户",sex:"IHIJI",city:"1",sign:"1",experience:"0",score:"1",classify:"1",wealth:"1",classifys:"1",wealths:"1"},
+        {id:4,username:"角色",sex:"编辑人员",city:"1",sign:"1",experience:"0",score:"1",classify:"1",wealth:"1",classifys:"1",wealths:"1"},
+        {id:5,username:"角色",sex:"领导",city:"1",sign:"1",experience:"0",score:"1",classify:"1",wealth:"1",classifys:"1",wealths:"1"},
+        {id:6,username:"角色",sex:"网站发布人员",city:"1",sign:"1",experience:"0",score:"1",classify:"1",wealth:"1",classifys:"1",wealths:"1"},
+        {id:7,username:"角色",sex:"办公室编辑人员",city:"1",sign:"1",experience:"0",score:"1",classify:"1",wealth:"1",classifys:"1",wealths:"1"},
+        {id:8,username:"角色",sex:"办公室编辑人员",city:"1",sign:"1",experience:"0",score:"1",classify:"1",wealth:"1",classifys:"1",wealths:"1"}
+      ]
+      ,cols: [[
+          {type:"checkbox"},
+        {field:'id', width:80, title: '序号',align:"center"}
+        ,{field:'name', width:100, title: '类型',align:"left"}
+        ,{field:'sex', width:165, title: '名称',align:"left"}
+        ,{field:'city', width:220, title: '修改站点',templet:"#pic2",align:"center"}
+        ,{field:'sign', title: '删除站点', width: 220,templet:"#pic3",align:"center"}
+        ,{field:'experience', width:220, title: '预览站点',templet:"#pic4",align:"center"}
+        ,{field:'wealth', width:220, title: '设置权限',templet:"#pic7",align:"center"}
+      ]]
+    });
+  });
+
+</script>
+
+<script type="text/html" id="pic1">
+  <a class="layui-btn-xs" lay-event="edit"><img src="./img/u5839.png" alt=""></a>
+</script>
+<script type="text/html" id="pic2">
+  {{#  if(d.city === "0"){ }}
+  <span class="right"></span>
+  {{#  } else{ }}
+  <span class="err"></span>
+  {{#  } }}
+</script>
+<script type="text/html" id="pic3">
+  {{#  if(d.sign === "0"){ }}
+  <span class="right"></span>
+  {{#  } else{ }}
+  <span class="err"></span>
+  {{#  } }}
+</script>
+<script type="text/html" id="pic4">
+  {{#  if(d.experience === "0"){ }}
+  <span class="right"></span>
+  {{#  } else{ }}
+  <span class="err"></span>
+  {{#  } }}
+</script>
+<script type="text/html" id="pic5">
+  {{#  if(d.score === "0"){ }}
+  <span class="right"></span>
+  {{#  } else{ }}
+  <span class="err"></span>
+  {{#  } }}
+</script>
+<script type="text/html" id="pic6">
+  {{#  if(d.classify === "0"){ }}
+  <span class="right"></span>
+  {{#  } else{ }}
+  <span class="err"></span>
+  {{#  } }}
+</script>
+<script type="text/html" id="pic7">
+  {{#  if(d.wealth === "0"){ }}
+  <span class="right"></span>
+  {{#  } else{ }}
+  <span class="err"></span>
+  {{#  } }}
+</script>
+<script type="text/html" id="pic8">
+  {{#  if(d.classifys=== "0"){ }}
+  <span class="right"></span>
+  {{#  } else{ }}
+  <span class="err"></span>
+  {{#  } }}
+</script>
+<script type="text/html" id="pic9">
+  {{#  if(d.wealths=== "0"){ }}
+  <span class="right"></span>
+  {{#  } else{ }}
+  <span class="err"></span>
+  {{#  } }}
+</script>

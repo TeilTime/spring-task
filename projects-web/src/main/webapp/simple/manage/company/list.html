@@ -1,0 +1,388 @@
+﻿<title>机构管理</title>
+
+<style>
+.layui-table-view .layui-form-checkbox[lay-skin=primary] i {
+    margin-top: 5px;
+}
+
+.white {
+    background: #ffffff;
+    color: green;
+}
+
+.black {
+    background: #B2B2B2;
+    color: #fff;
+}
+.level1 .noline_open{display: none!important;}
+.layui-table-cell .layui-form-checkbox[lay-skin=primary]{top:-5px;}
+th .layui-table-cell{text-align: center}
+</style>
+
+<div class="layui-card layadmin-header">
+    <div class="layui-breadcrumb" lay-filter="breadcrumb">
+        <a lay-href="">主页</a>
+        <a><cite>用户</cite></a>
+        <a><cite>后台管理员</cite></a>
+    </div>
+</div>
+
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space12">
+        <div class="layui-col-md3 md3-left">
+            <div class="layui-card h100">
+                <div class="layui-card-header">机构管理</div>
+                <div class="layui-card-body">
+                    <div style="width: 300px;overflow: hidden">
+                        <ul id="treeDemo" class="ztree"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md9  md3-right">
+            <div class="layui-card h100">
+                <div class="layui-card-body">
+                    <div class="layui-tab">
+                        <div class="layui-tab-content">
+                            <div class="layui-tab-item layui-show">
+                                <div class="layui-btn-container" style="display: inline-block">
+                                    <button class="layui-btn" data-type="add">添加机构</button>
+                                    <button class="layui-btn" data-type="del">删除机构</button>
+                                </div>
+                                <form class="layui-form" action="#" style="display: inline-block;float: right;">
+                                    <div class="layui-form-item" style="display: inline-block;">
+                                        <div class="layui-input-block" style="display: inline-block;width: 80px;margin-right: -115px;">
+                                            <select name="city" lay-verify="required">
+                                                <option value="" disabled>全部</option>
+                                            </select>
+                                        </div>
+                                        <div class="layui-input-block" style="display: inline-block">
+                                            <input type="text" name="title" id="title" required lay-verify="required" placeholder="请输入"
+                                                   autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <button class="layui-btn" type="button" onclick="getCompanyInfo(1)" style="display: inline-block;margin: -5px 0 0 -4px;"><i class="layui-icon layui-icon-search"></i></button>
+                                </form>
+                                <div style="float: left;">
+                                    <table class="layui-hide" id="test" lay-filter='test'></table>
+                                </div>
+                            </div>
+                            <div class="layui-tab-item">
+                                <form class="layui-form" action="#" style="display: inline-block">
+                                    <div class="layui-form-item" style="display: inline-block;">
+                                        <div class="layui-input-block"
+                                             style="display: inline-block;width: 80px;margin-right: -115px;">
+                                            <select name="city" lay-verify="required">
+                                                <option value="" disabled>全部</option>
+                                            </select>
+                                        </div>
+                                        <div class="layui-input-block" style="display: inline-block">
+                                            <input type="text" name="title" required lay-verify="required" placeholder="请输入"
+                                                   autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <button class="layui-btn" style="display: inline-block;margin: -5px 0 0 -4px;"><i class="layui-icon layui-icon-search"></i></button>
+                                </form>
+                                <table class="layui-hide" id="test1"></table>
+                            </div>
+                        </div>
+                       <!-- <ul class="layui-tab-title" style="position: fixed;bottom:50px;left: 645px;">
+                            <li class="layui-this white">子组织</li>
+                            <li class="black">数据资源</li>
+                        </ul>-->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--ztree-->
+<script>
+    var zNodes;
+    function getTreeData() {
+        ajax("/manage/company/getCompanyTree","get",{}).then(data=>{
+            console.log(data);
+            var nodes = data.obj;
+            zTreeObj = $.fn.zTree.init($("#treeDemo"), settingss, data.obj); //初始化树
+            zTreeObj.expandAll(true);    //true 节点全部展开、false节点收缩
+        })
+    }
+    var settingss = {
+        data: {
+            simpleData: {
+                enable: true,  //true 、 false 分别表示 使用 、 不使用 简单数据模式
+                idKey: "id",  //节点数据中保存唯一标识的属性名称
+                pIdKey: "parentId",    //节点数据中保存其父节点唯一标识的属性名称
+                rootPId: -1  //用于修正根节点父节点数据，即 pIdKey 指定的属性值
+            },
+            key: {
+                name: "name"  //zTree 节点数据保存节点名称的属性名称  默认值："name"
+            }
+        },
+        view: {showLine: false, showIcon: true}
+    };
+</script>
+<!--jquery-->
+<script>
+    var id="";
+    function  del() {
+        var data = checkChecked('test');
+        if(data){
+            for(var i in data){
+                deleteCompanyInfo(1,data[i]);
+            }
+        }
+
+    }
+    $(function () {
+        getTreeData();
+        getCompanyInfo(1);
+        layui.form.render();
+    })
+    layui.form.on("submit(addCompany)",function(data){
+        console.log(data,"_____");
+        if(data.field.id){
+            editCompanyInfo(1,data.field)
+        }else{
+            addCompanyInfo(1,data.field);
+        }
+        return false;
+    })
+
+    function  add() {
+        layer.open({
+            type: 1,
+            area: ['552px', '412px'],
+            title:'添加机构',
+            maxmin: false,
+            content: '<div id="fieldForm"></div>'
+        })
+        layui.laytpl($("#fieldTemplate").html()).render({}, function(html){
+            $("#fieldForm").html(html);
+        })
+        layui.use('laydate', function() {
+            var laydate = layui.laydate;
+            laydate.render({
+                elem: '#test29'
+                ,theme: 'molv'
+            });
+            laydate.render({
+                elem: '#test30'
+                ,theme: 'molv'
+            });
+        })
+    }
+
+    function deleteCompanyInfo(pageNo,data) {
+
+        $.ajax({
+            type: "delete",
+            url: "/manage/company/"+data,
+            contentType: 'application/json',
+//            data: JSON.stringify(data),
+            dataType: 'json',
+            success: function (data) {
+                if (data.success) {
+
+                    layer.closeAll();
+                    getCompanyInfo(1);
+                    getTreeData()
+                }
+
+            },
+            error: function (data) {
+                console.log(data.msg)
+            }
+        })
+        
+    }
+    function editCompanyInfo(pageNo,data) {
+
+        console.log(data,'111111');
+        $.ajax({
+            type: "put",
+            url: "/manage/company/"+id,
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            dataType: 'json',
+            success: function (data) {
+                if (data.success) {
+
+                    layer.closeAll();
+                    getCompanyInfo(1);
+                    getTreeData()
+                }
+
+            },
+            error: function (data) {
+                console.log(data.msg)
+            }
+        })
+
+    }
+    function addCompanyInfo(pageNo,data) {
+//        var jsonData = {
+//            cpytel: data.cpytel,
+//            crtime: data.crtime,
+//            name: data.name,
+//            principal: data.principal,
+//            regtime: data.regtime
+//        }
+        $.ajax({
+            type: "post",
+            url: "/manage/company/add",
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            dataType: 'json',
+            success: function (data) {
+                if (data.success) {
+
+                    layer.closeAll();
+                    getCompanyInfo(1);
+                    getTreeData();
+                }
+
+            },
+            error: function (data) {
+                console.log(data.msg)
+            }
+        })
+    }
+    function getCompanyInfo(pageNo) {
+        var jsonData = {
+            "pager": {
+                "current": pageNo,
+                "size": 10
+            },
+            entity:{
+                name: $("#title").val()
+            }
+        }
+        $.ajax({
+            type: "post",
+            url: "/manage/company/list",
+            contentType: 'application/json',
+            data: JSON.stringify(jsonData),
+            dataType: 'json',
+            success: function (data) {
+                if (data.success) {
+//                    console.log(data.obj);
+                    companyObj =data.obj.records;
+                    layui.table.reload('test',{
+                        data: data.obj.records
+                    })
+                }
+
+            },
+            error: function (data) {
+                console.log(data.msg)
+            }
+        })
+    }
+
+</script>
+
+<!-- layui -->
+<script>
+    layui.use('table', function() {
+        var table = layui.table;
+        table.render({
+            elem: '#test'
+            , data: []
+            , cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+            , cols: [[
+                {type: "checkbox"}
+                , {type: 'numbers', width: 100, title: '序号', align: "right"}
+                , {field: 'name', width: 200, title: '公司名称', align: "left"}
+                , {field: 'regtime', width: 200, title: '注册日期', align: "left"}
+                , {field: 'principal', width: 140, title: '负责人', align: "left"}
+                , {field: 'crtime', width: 200, title: '创建时间', align: "left"} //minWidth：局部定义当前单元格的最小宽度，layui 2.2.1 新增
+                , {field: 'cpytel', width: 200, title: '企业电话', align: "left"}
+                , {field: 'operation', width: 180, title: '操作', align: "left", templet: "#operations"}
+            ]]
+        });
+        layui.table.on('row(LAY-app-content-tags)', function (obj) {
+            var data = obj.data;
+            console, log(data, "hahha");
+            //标注选中样式
+            obj.tr.addClass('layui-table-click').siblings().removeClass('layui-table-click');
+        });
+        //监听操作列工具条
+        layui.table.on('tool(test)', function (obj) { //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
+            var data = obj.data; //获得当前行数据
+            var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+            var tr = obj.tr; //获得当前行 tr 的DOM对象
+
+            if (layEvent === 'del') { //删除
+                layer.alert("确定删除机构:[" + data.name + "]", function () {
+//                doDeleteByIds([data.id]);
+                    deleteCompanyInfo(1,data.id);
+                })
+            }else if(layEvent === 'edit') { //编辑
+                console.log(data);
+                id=data.id;
+                data.editType =1;
+                setOpenData(data, data.editType)
+            }
+            });
+    })
+    function setOpenData(data,type) {
+        layui.layer.open({
+            type: 1,
+            title: "修改机构信息",
+            area:['552px', '412px'],
+            anim: 2,
+            content: '<div id="table_data" class="userForm"></div>',
+        });
+        layui.laytpl($("#fieldTemplate").html()).render(data, function(html){
+            $("#table_data").html(html)
+            layui.form.val('editForm', data);
+        });
+    }
+</script>
+<script type="text/html" id="fieldTemplate">
+    <form class="layui-form" style="margin: 20px 0 0 20px;" lay-filter="editForm">
+        <div class="layui-form-item">
+            <label  class="layui-form-label">公司名称：</label>
+            <div class="layui-input-block" style="width: 350px;">
+                <input type="text" class="layui-input" name="name" lay-verify="required">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label  class="layui-form-label">注册日期：</label>
+            <div class="layui-input-block" style="width: 350px;">
+                <input type="text" class="layui-input" id="test29" placeholder="yyyy-MM-dd HH:mm:ss" name="regtime">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label  class="layui-form-label">负责人：</label>
+            <div class="layui-input-block" style="width: 350px;">
+                <input type="text" class="layui-input" lay-verify="required" name="principal">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label  class="layui-form-label">创建时间：</label>
+            <div class="layui-input-block" style="width: 350px;">
+                <input type="text" class="layui-input" id="test30" placeholder="yyyy-MM-dd HH:mm:ss" name="crtime">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label  class="layui-form-label">企业电话：</label>
+            <div class="layui-input-block" style="width: 350px;">
+                <input type="text" class="layui-input" lay-verify="phone" name="cpytel">
+            </div>
+        </div>
+        <input hidden="hidden" name="id">
+        <input type="hidden" name="status" value="1"/>
+        <div class="button-bar">
+            <button class="layui-btn" lay-submit lay-filter="addCompany">确定</button>
+            <button class="layui-btn layui-btn-primary" type="button" onclick="layer.closeAll()">取消</button>
+        </div>
+    </form>
+
+</script>
+<script type="text/html" id="operations">
+    <a class="layui-btn layui-btn-xs"  lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>

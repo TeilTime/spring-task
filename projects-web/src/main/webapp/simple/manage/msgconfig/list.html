@@ -1,0 +1,370 @@
+﻿<title>消息源配置</title>
+<style>
+  #nav span,.right span{display: none;}
+  #nav a{display: inline-block;width: 40px;height: 56px;text-align: center;border: 1px solid #f5f5f5;}
+  #nav a:nth-of-type(3){display: inline-block;width: 170px;height: 52px; text-align: left;padding-left: 20px;border-top: 2px solid #000;font-weight: bold;}
+  .right{display: inline-block;position: absolute;top: 0;right: 0;}
+  .layui-breadcrumb a{color: #000!important;}
+  .layui-table-header,.layui-table-view,.layui-table-box{overflow: visible;}
+  .layui-table-link:hover{color: #009688!important;}
+  .layui-card-header p{margin-top: 10px;margin-left: 10px;}
+  .layui-form-item .layui-input-block{display: inline-block;margin-left: -5px;}
+  #select .layui-form-select{width: 327px;}
+  label span{color: red; margin-right: 5px;}
+  th .layui-table-cell{text-align: center}
+</style>
+<div class="layui-card layadmin-header">
+  <div class="layui-breadcrumb" lay-filter="breadcrumb" id="nav">
+    <a><i class="layui-icon layui-icon-prev"></i></a>
+    <a lay-href=''><i class="layui-icon layui-icon-home"></i></a>
+    <a>消息源配置<i class="layui-icon layui-icon-close" style="margin-left: 50px"></i></a>
+    <div class="right">
+      <a><i class="layui-icon layui-icon-next"></i></a>
+      <a><i class="layui-icon layui-icon-down"></i></a>
+    </div>
+  </div>
+</div>
+<div class="layui-fluid">
+  <div class="layui-card h100"  id="index">
+    <div class="layui-card-body">
+      <div class="layui-btn-container" style="display: inline-block;">
+        <button type="button" class="layui-btn" data-type='offset'>新建消息源配置</button>
+        <button type="button" class="layui-btn" data-type='edit'>修改消息源配置</button>
+        <button type="button" class="layui-btn" data-type="del">删除消息源配置</button>
+      </div>
+      <form class="layui-form"  style="float: right;margin-right:60px;">
+        <div class="layui-form-item">
+          <div class="layui-input-block" style="width: 75px;">
+            <select name="" id="">
+              <option value="" selected>全部</option>
+            </select>
+          </div>
+          <div class="layui-input-block">
+            <input type="text" id="nameId" name="name" required  lay-verify="required" placeholder="名称" autocomplete="off" class="layui-input">
+          </div>
+        </div>
+      </form>
+      <button class="layui-btn" style="display: inline-block;float:right;margin-right: -308px;" onclick="getMsgList()"><i class="layui-icon">&#xe615;</i></button>
+      <table id="test" lay-filter="test"></table>
+    </div>
+  </div>
+  <div class="layui-card" style="height:348px;display:none" id="detail">
+    <div class="layui-card-header" style="height: 60px;line-height: 15px;padding-top: 10px;">
+      <p style="color: #333333">你好新朋友，感谢使用聚网快速开发平台</p>
+      <p style="color: #999;font-size:14px;">2019-03-06 15:57:00</p>
+    </div>
+    <div class="layui-card-body">
+      <p style="margin-left:10px;line-height:40px;">公司成立于2011年，注册资金1050万元，致力于政府、企业、科研等客户提供稳定可靠的产品和IT信息服务。<br>
+
+        公司背靠院校、科研院所、在北京、郑州设立研发中心、面向全国市场。<br>
+
+        发展目标：品质第一，客户至上。<br>
+
+        工作标准：严谨敬业、诚信负责、开拓进取。</p>
+      <button class="layui-btn layui-btn-primary" style="margin-top: 20px; margin-left: 10px;" onclick="returnBack()">返回上一级</button>
+    </div>
+  </div>
+</div>
+
+<script type="text/html" id="titleTpl">
+  <a href="javascript:void(0);" class="layui-table-link" style="color:#000" onclick="go()">{{d.content}}</a>
+</script>
+<script type="text/html" id="fieldTemplate">
+  <form class='layui-form' lay-filter="editForm">
+    <div class="layui-form-item" style='margin-top:10px;'>
+      <label class="layui-form-label"><span>*</span>名称</label>
+      <div class="layui-input-block" style='height:38px;width:327px;overflow:hidden;border-radius:2px'>
+        <input type="text"  name="name" required lay-verify="required" autocomplete="off" placeholder="请输入" class="layui-input" style='width:327px;'>
+      </div>
+    </div>
+    <div class="layui-form-item" style='margin-top:10px;'>
+      <label class="layui-form-label">消息类型</label>
+      <div class="layui-input-block" id='select'>
+        <select name="msgType" id="msgTypes">
+          <option value="" selected>请选择消息类型</option>
+        </select>
+      </div>
+    </div>
+    <!--<div class="layui-form-item" style='margin-top:10px;'>
+      <label class="layui-form-label">组织</label>
+      <div class="layui-input-block" id='select'>
+        <select name="groupId" id="groups">
+          <option value="" selected>请选择组织机构</option>
+        </select>
+      </div>
+    </div>-->
+    <div class="layui-form-item">
+      <label class="layui-form-label">是否加密</label>
+      <div class="layui-input-block">
+        <input type="radio" name="ifEncrypt" value="1" title="是" checked="checked">
+        <input type="radio" name="ifEncrypt" value="0" title="否">
+      </div>
+    </div>
+    <div class="layui-form-item" style='margin-top:10px;'>
+      <label class="layui-form-label">内容 </label>
+      <div class="layui-input-block" style='height:38px;width:327px;overflow:hidden;border-radius:2px'>
+        <input type="text" name="value"  value=""  autocomplete="off" placeholder="请输入" class="layui-input">
+      </div>
+    </div>
+    <div class="layui-form-item" style='margin-top:10px;'>
+      <label class="layui-form-label">说明</label>
+      <div class="layui-input-block" style='height:38px;width:327px;border-radius:2px'>
+        <textarea name="describe" placeholder="请输入描述" class="layui-textarea"></textarea>
+      </div>
+    </div>
+    <div class="layui-form-item" style='margin:90px 0 0 290px'>
+      <button  type="button" class='layui-btn' lay-submit lay-filter="addMsg">确定</button>
+      <button  type="button" class="layui-btn layui-btn-primary" onclick="layer.closeAll();">取消</button>
+    </div>
+    <input type="hidden" id="mark" name="mark" value="9">
+    <input hidden="hidden" name="id">
+  </form>
+</script>
+
+
+<script type="text/html" id="typeDemo">
+{{#if(d.ifEncrypt===1){ }}
+  是
+{{#}else{ }}
+  否
+{{#} }}
+</script>
+
+<script>
+  var url = "/config/msg";
+  var msgIndex;
+  $(function () {
+      getMsgList();
+  })
+
+  layui.use('table', function() {
+      var $ = layui.$
+          , layer = layui.layer
+          , table = layui.table
+          , form = layui.form;
+      form.on('submit(addMsg)', function(data){
+          if (data.field.id){
+              doEditMsg(data.field)
+          }else{
+              doAddMsg(data.field)
+          }
+      })
+  })
+  function doAddMsg(data) {
+      $.ajax({
+          type:'post',
+          url:url,
+          data:JSON.stringify(data),
+          contentType:'application/json',
+          dataType:'json',
+          success:function (data) {
+              layer.alert("添加成功")
+             layer.close(msgIndex);
+              getMsgList();
+          }
+      })
+  }
+  function doEditMsg(data) {
+      // console.log(id)
+      var thisUrl = url+"/"+data.id;
+      var msg = "修改成功";
+      var method = "put";
+      ajax(thisUrl,method,JSON.stringify(data)).then(res=>{
+          if(res.success){
+          res.msg = msg;
+      }
+      layer.alert(res.msg,function(){
+          layer.closeAll();
+          getMsgList();
+      })
+  }).catch(res=>{
+
+      })
+      return false;
+  }
+  //获取列表数据
+  function getMsgList() {
+      var jsondata = {
+          "pager": {
+              "current": 1,
+              "size": 15
+          }
+          ,"entity": {
+              "mark":9,
+              "name": $('#nameId').val()
+          }
+      }
+      $.ajax({
+          type: "post",
+          url: url + "/list",
+          contentType: "application/json",
+          data: JSON.stringify(jsondata),
+          dataType: "json",
+          success: function (data) {
+              console.log(data);
+              layui.table.render({
+                  elem: '#test'
+                  , data: data.obj.records
+                  , cols: [[
+                      {type: 'checkbox'}
+                      , {type: 'numbers', width: 120, title: '序号',align:"left"}
+                      , {field: 'name', width: 320, title: '名称',align:"left"}
+                      , {field: 'value', width: 320, title: '内容',align:"left"}
+                      , {field: 'describe', width: 307, title: '说明',align:"left"}
+                      , {field: 'msgType', width: 150, title: '消息类型',align:"left"}
+                      , {field: 'groupName', width: 215, title: '组织',align:"left"}
+                      , {field: 'ifEncrypt', width: 150, title: '是否加密',templet: '#typeDemo',align:"left"}
+                  ]]
+                  ,limit:15
+              });
+          },
+          error: function (data) {
+              console.log(data.msg)
+          }
+      })
+  }
+  function go(){
+    document.getElementById('index').style.display='none';
+    document.getElementById('detail').style.display='block';
+  }
+  function returnBack(){
+    document.getElementById('index').style.display='block';
+    document.getElementById('detail').style.display='none';
+  }
+  layui.use('table', function(){
+    var table = layui.table;
+  });
+
+
+      //新建
+      active.offset = function offset(othis){
+          msgIndex=layer.open({
+          type: 1,
+          area: ['502px', '557px'],
+          title:'新建消息配置',
+          maxmin: true,
+          content: '<div id="fieldForm"></div>'
+        });
+        layui.laytpl($("#fieldTemplate").html()).render({}, function(html){
+          $("#fieldForm").html(html);
+            //查询类型
+            ajax("/config/system/getSys","post",JSON.stringify({entity:{mark:22}})).then(res=>{
+              var records = res.obj;
+              var types;
+              for(var i in records){
+                  types += '<option value="'+records[i].value+'">'+records[i].value+'</option>'
+              }
+              $("#msgTypes").append(types);
+              layui.form.render();
+            })
+
+            //查询组织
+            ajax("/manage/group/list","post",JSON.stringify({pager:{current:1,size:10}})).then(res=>{
+              var records = res.obj.records;
+              var groups;
+              for(var i in records){
+                  groups += '<option value="'+records[i].id+'">'+records[i].name+'</option>'
+              }
+              $("#groups").append(groups);
+              layui.form.render();
+            })
+
+        layui.form.render();
+        })
+      }
+
+      //编辑
+      function edit() {
+          var check =layui.table.checkStatus('test').data;
+          if(check.length===0){
+              layer.alert("请选择数据")
+              return false;
+          }
+          var id=check[0].id;
+         // console.log(id)
+          $.ajax({
+              type:'get',
+              url:url+"/"+id,
+              dataType:"json",
+              success:function (data) {
+                 // console.log(data.obj)
+                  msgIndex=layer.open({
+                      type: 1,
+                      area: ['502px', '557px'],
+                      title: '修改消息配置',
+                      maxmin: true,
+                      content: '<div id="fieldForm"></div>'
+                  });
+                  layui.laytpl($("#fieldTemplate").html()).render({}, function(html) {
+                      $("#fieldForm").html(html);
+                      //查询类型
+                      ajax("/config/system/getSys","post",JSON.stringify({entity:{mark:22}})).then(res=>{
+                          var records = res.obj;
+                          console.log(records);
+                      var types;
+                      for(var i in records){
+                          types += '<option value="'+records[i].value+'">'+records[i].value+'</option>'
+                      }
+                      $("#msgTypes").append(types);
+                      layui.form.val("editForm",data.obj);
+                      layui.form.render();
+                  })
+
+                      //查询组织
+                      ajax("/manage/group/list","post",JSON.stringify({pager:{current:1,size:10}})).then(res=>{
+                          var records = res.obj.records;
+                      var groups;
+                      for(var i in records){
+                          groups += '<option value="'+records[i].id+'">'+records[i].name+'</option>'
+                      }
+                      $("#groups").append(groups);
+                      layui.form.val("editForm",data.obj);
+                      layui.form.render();
+                  })
+                      // layui.form.val("editForm",data.obj);
+                      // layui.form.render()
+                  })
+
+              }
+          })
+      }
+
+      //删除
+      function del() {
+          var data =layui.table.checkStatus('test').data;
+          var str=""
+          for(var i in data){
+              str+=data[i].id;
+              if(i<data.length-1){
+                  str+=","
+              }
+          }
+          // console.log(str)
+          if(str===""){
+              layer.alert("请选择删除的数据")
+              return false;
+          }
+          if(confirm("是否确定删除")){
+              $.ajax({
+                  type:"get",
+                  url:url+"/delByIds?ids="+str,
+                  dataType:"json",
+                  success:function (data) {
+                      layer.alert(data.msg)
+                      getMsgList();
+                  },
+                  error:function (data) {
+                      layer.alert(data.msg)
+                  }
+              })
+          }
+      }
+
+    // $(document).on('click', '.layui-btn',function(){
+    //   var othis = $(this), method = othis.data('method');
+    //   active[method] ? active[method].call(this, othis) : '';
+    // });
+
+
+  layui.form.render();
+</script>

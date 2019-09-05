@@ -1,0 +1,98 @@
+﻿
+<title>用户登录日志</title>
+<style>
+  #nav span,.right span{display: none;}
+  #nav a{display: inline-block;width: 40px;height: 56px;text-align: center;border: 1px solid #f5f5f5;}
+  #nav a:nth-of-type(3){display: inline-block;width: 170px;height: 52px; text-align: left;padding-left: 20px;border-top: 2px solid #000;font-weight: bold;}
+  .right{display: inline-block;position: absolute;top: 0;right: 0;}
+  .layui-breadcrumb a{color: #000!important;}
+  .layui-card .layui-table-view{margin: 60px 0 20px 0;}
+</style>
+<div class="layui-card layadmin-header">
+  <div class="layui-breadcrumb" lay-filter="breadcrumb" id="nav">
+    <a><i class="layui-icon layui-icon-prev"></i></a>
+    <a lay-href=''><i class="layui-icon layui-icon-home"></i></a>
+    <a>用户登录日志<i class="layui-icon layui-icon-close" style="margin-left: 50px"></i></a>
+    <div class="right">
+      <a><i class="layui-icon layui-icon-next"></i></a>
+      <a><i class="layui-icon layui-icon-down"></i></a>
+    </div>
+  </div>
+</div>
+<div class="layui-fluid">
+  <div class="layui-card" style="height: 760px;">
+    <div class="layui-card-body">
+
+      <form class="layui-form" style="float: right;margin-right:100px;">
+        <div class="layui-form-item">
+          <div class="layui-input-block">
+            <input id="times" type="text" name="title" required  lay-verify="required" placeholder="用户名" autocomplete="off" class="layui-input">
+          </div>
+        </div>
+      </form>
+      <button onclick="getUserLogin(1)" class="layui-btn" style="display: inline-block;float:right;margin-right: -350px;"><i class="layui-icon">&#xe615;</i></button>
+      <table class="layui-hide" id="test" style="margin-top: 100px;"></table>
+        <div id="demo8"></div>
+    </div>
+  </div>
+</div>
+<script>
+  var pageSize = 15;
+    $(function () {
+        getUserLogin(1);
+    })
+    function getUserLogin(pageNo) {
+        var jsondata={
+            "pager":{
+                "current":pageNo,
+                "size":pageSize
+            },
+            "entity":{
+                "crUser":document.getElementById("times").value
+            }
+        }
+        $.ajax({
+            type:"POST",
+            url:"/log/userLogin/list",
+            contentType:"application/json",
+            data:JSON.stringify(jsondata),
+            dataType:"json",
+            success:function (data) {
+                console.log(data.obj)
+                layui.use(['table','laypage'],function () {
+                    var table=layui.table
+                        ,laypage=layui.laypage;
+                    table.render({
+                        elem:'#test'
+                        ,data:data.obj.records
+                        ,cols: [[
+                            {type:'numbers',title: '序号'}
+                            ,{field:'crUser', width:240, title: '用户名'}
+                            ,{field:'address', width:240, title: '登录IP'}
+                            ,{field:'loginTime', width:260, title: '登录时间'}
+                            ,{field:'logoutTime', width:260, title: '退出时间'}
+                            ,{field:'times', width:300, title: '登录次数'}
+                            ,{field:'createTime', title: '创建时间', width:240}
+                        ]]
+                      ,limit: 15
+                    })
+                    laypage.render({
+                        elem:'demo8'
+                        ,count:data.obj.total
+                        ,curr:data.obj.current
+                        ,limit:pageSize
+                        ,layout:['count','prev','page','next','refresh','skip']
+                        ,jump:function (obj,first) {
+                            if (!first){
+                                getUserLogin(obj.curr)
+                            }
+                        }
+                    })
+                })
+            },
+            error:function (data) {
+                layer.alert(data.msg)
+            }
+        })
+    }
+</script>

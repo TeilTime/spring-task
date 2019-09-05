@@ -1,0 +1,432 @@
+﻿<title>元数据分组管理</title>
+
+<style>
+  .addColor{background: rgba(218, 250, 162, 1)}
+  .left-list .layui-form-label{padding: 0px; width: auto;}
+  .left-list .layui-input-block { margin-left: 28px;}
+  .left-list .layui-form-item .layui-form-checkbox[lay-skin=primary] {  margin-top: 5px;}
+  .left-list .active{background:rgba(218, 250, 162, 1)}
+  .left-list .active2{background:rgba(218, 250, 162, 1)}
+  .left-list .layui-card-body{padding:10px 0;height: 85%;}
+  .left-list .layui-form-item{padding:8px 15px;margin-bottom: 0px;cursor: pointer;}
+  .left-list .layui-btn-container{padding-left:25px;}
+  li .layui-form-checkbox[lay-skin=primary] div span:nth-of-type(1){width: 80px;}
+  li .layui-form-checkbox[lay-skin=primary] div span:nth-of-type(2){width: 80px; margin-left: 45px;}
+</style>
+
+<div class="layui-fluid">
+  <div class="layui-row layui-col-space12 h100">
+    <div class="layui-col-md3 left-list h100" style="width: 23%;">
+      <div class="layui-card h100">
+        <div class="layui-card-header">分组</div>
+        <div class="layui-card-body">
+          <div class="layui-btn-container">
+            <button type="button" class="layui-btn layui-btn-sm" data-type="add"><i class="layui-icon">&#xe608;</i> 添加分组</button>
+            <button type="button" class="layui-btn layui-btn-sm" data-type="edit"><i class="layui-icon">&#xe642;</i> 修改分组</button>
+            <button type="button" class="layui-btn layui-btn-sm" data-type="delGroup"><i class="layui-icon">&#xe640;</i> 删除分组</button>
+          </div>
+          <form class="layui-form" action="" id="listForm" style='position: relative;'>
+          </form>
+        </div>
+        <div class="" id="pageleft" style="padding-left: 10px"></div>
+      </div>
+    </div>
+    <div class="layui-col-md9 h100" style="width: 77%">
+      <div class="layui-card h100">
+        <div class="layui-card-header">子分组</div>
+        <div class="layui-card-body">
+          <div class="layui-btn-container">
+            <button type="button" class="layui-btn layui-btn-sm layui-btn-primary" data-type="add2">添加子分组</button>
+            <button type="button" class="layui-btn layui-btn-sm layui-btn-primary" data-type="edit2">修改子分组</button>
+            <button type="button" class="layui-btn layui-btn-sm layui-btn-primary" data-type="del">删除子分组</button>
+          </div>
+          <table class="layui-hide" id="fieldTabel"></table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--弹出层模板（新增，查看，编辑）-->
+<script type="text/html"  id="dataFormTpl">
+  <form class="layui-form" lay-filter="dataForm">
+    <div class="layui-card">
+      <div class="layui-card-body">
+        <div class="layui-form-item">
+          <label class="layui-form-label">分组名称:</label>
+          <div class="layui-input-block">
+            <input type="text" name="name" value="" required lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">分组描述:</label>
+          <div class="layui-input-block">
+            <input type="text" name="groupdesc" value="" required lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+          </div>
+        </div>
+      </div>
+    </div>
+    <input type="hidden" name="parentid"/>
+    <input type="hidden" name="id"/>
+    <div class="button-bar">
+      <button class="layui-btn" lay-submit lay-filter="addData">确认</button>
+      <button class="layui-btn" type="button" data-type="close">取消</button>
+    </div>
+  </form>
+</script>
+
+<script>
+  $(function(){
+    $(".left-list").on("mouseover",".layui-form-item",function(){
+      $(this).addClass("active2").siblings().removeClass("active2");
+    })
+    $(".left-list").on("mouseleave",".layui-form-item",function(){
+      $(this).removeClass("active2");
+    })
+    $(".left-list").on("click",".layui-input-block",function(){
+      $(".left-list input").prop("checked",false);
+      $(this).parent().find("input").prop("checked",true);
+      layui.form.render();
+      $(this).parent().addClass("active").siblings().removeClass("active");
+      groupObj.id = $(this).attr("data_id");
+      groupObj.name = $(this).attr("data_name");
+      getChildGroup($(this).attr("data_id"));
+    })
+    layui.form.render();
+    getGroups(1);
+  })
+
+  var groupObj = {};
+
+  function getGroups(pageNo){
+    var jsondata = {
+      "pager": {
+        "current": pageNo,
+        "size": 10
+      },
+      "entity": {
+        "parentid": 0
+      }
+    }
+    ajax("/metadata/group/list","post",JSON.stringify(jsondata)).then(data=>{
+      console.log(data);
+      if(data.success){
+        if(data.obj.records.length>0){
+          getChildGroup(data.obj.records[0].id);
+          groupObj.id = data.obj.records[0].id;
+          groupObj.name = data.obj.records[0].name;
+        }
+        var html = "";
+        for(var i in data.obj.records){
+          var obj = data.obj.records[i];
+          var activeClass = "";
+          if(i == 0) {
+            activeClass = "active";
+          };
+          html += '<div class="layui-form-item '+activeClass+'" data_id="'+obj.id+'" data_desc="'+obj.groupdesc+'" data_name="'+obj.name+'" pane="">' +
+                  '              <div class="layui-form-label"><input type="checkbox" name="listidg" value="'+obj.id+'" lay-skin="primary"></div>' +
+                  '              <div class="layui-input-block">' +
+                  '                <p>'+obj.name+'</p>' +
+                  '                <p>创建时间:'+obj.createTime+'</p>' +
+                  '              </div>' +
+                  '            </div>';
+        };
+        $("#listForm").html(html);
+        var laypage = layui.laypage
+                ,layer = layui.layer;
+        layui.use(['laypage', 'layer'], function(){
+          laypage.render({
+            elem: 'pageleft'
+            ,count: data.obj.total //数据总数
+            ,curr:data.obj.current
+            ,jump: function(obj,first){
+              if(!first){
+                getGroups(obj.curr)
+              }
+            }
+          });
+        });
+
+        layui.form.render();
+      }
+    })
+  }
+  function getChildGroup(id){
+    var jsondata = {
+      "entity": {
+        "parentid": id
+      },
+      "pager": {
+        "current": 1,
+        "size": 10
+      }
+    }
+    ajax("/metadata/group/list","post",JSON.stringify(jsondata)).then(data=>{
+      console.log(data);
+      layui.use('table', function(){
+        var table = layui.table;
+        table.render({
+          elem: '#fieldTabel'
+          ,data:data.obj.records
+          ,cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+          ,cols: [[
+            {type:'checkbox'}
+            ,{type:'numbers',title: '序号'}
+            ,{field:'name', title: '名称', sort: true}
+            ,{field:'groupdesc', title: '描述', sort: true}
+            ,{field:'createTime', title: '创建时间', sort: true}
+          ]],
+          id: "demo2"
+        });
+      });
+    })
+  }
+
+  var defaultSize = 15;
+  function add(){
+      showData({parentid: 0});
+  }
+
+  active.add2 = function () {
+    showData({parentid: groupObj.id,parentName: groupObj.name});
+  }
+
+  function showData(data){
+    console.log(data);
+    var dataTitle;
+    if(data.id && data.parentid == 0){
+      dataTitle = "修改分组"
+    }else if(data.id && data.parentid != 0){
+      dataTitle = "修改子分组";
+    }else if(!data.id && data.parentid == 0){
+      dataTitle = "添加分组";
+    }else{
+      dataTitle = "添加子分组";
+    }
+    //多窗口模式，层叠置顶
+    layer.open({
+      type: 1,
+      title: dataTitle,
+      area: ['600px', '450px'],
+      maxmin: true,
+      content: '<div id="dataFormDiv"></div>',
+    });
+    layui.laytpl($("#dataFormTpl").html()).render({}, function(html){
+      $("#dataFormDiv").html(html)
+    });
+    layui.form.val("dataForm",data);
+  }
+
+  layui.form.on("submit(addData)",function(data){
+    console.log(data);
+    if(data.field.id && data.field.parentid == 0){
+      doEditGroup(data.field);
+    }else if(data.field.id && data.field.parentid != 0) {
+      doEditGroupT(data.field);
+    }else if(data.field.parentid != 0){
+      ajax("/metadata/group","post",JSON.stringify(data.field)).then(res => {
+        if(res.success){
+          getChildGroup(groupObj.id);
+          layer.closeAll();
+        }else{
+          layer.alert(res.msg);
+        }
+      })
+      return false;
+    }else{
+      ajax("/metadata/group","post",JSON.stringify(data.field)).then(res => {
+        if(res.success){
+          getGroups(1);
+          layer.closeAll();
+        }else{
+          layer.alert(res.msg);
+        }
+      })
+      return false;
+    }
+    return false;
+  })
+  function doEditGroup(data){
+    ajax("/metadata/group/"+data.id,"put",JSON.stringify(data)).then(res=>{
+      if(res.success){
+        layer.closeAll();
+        getGroups(1);
+      }else{
+        layer.alert(res.msg,function(){
+          layer.closeAll();
+        });
+      }
+    })
+  }
+  function doEditGroupT(data){
+    ajax("/metadata/group/"+data.id,"put",JSON.stringify(data)).then(res=>{
+      if(res.success){
+        layer.closeAll();
+        getChildGroup(groupObj.id);
+      }else{
+        layer.alert(res.msg,function(){
+          layer.closeAll();
+        });
+      }
+    })
+  }
+
+  active.delGroup = function(){
+    delGroupA();
+  };
+
+  function delGroupA(){
+    var ids = [];
+    $("input[name='listidg']:checked").each(function(){
+      ids.push($(this).val());
+    })
+    console.log(ids)
+    if(ids.length<=0){
+      layer.alert("请选择分组");
+      return false;
+    }
+    layer.open({
+      content: "确认删除该分组吗？"
+      ,btn: ['确认',"取消"]
+      ,yes: function(index, layero){
+        for(var i in ids) {
+          var jsondata = {
+            "entity": {
+              "parentid": ids[i]
+            },
+            "pager": {
+              "current": 1,
+              "size": 100
+            }
+          }
+          ajax("/metadata/group/list", "post", JSON.stringify(jsondata)).then(data => {
+            var dids = [];
+            for(var i=0;i< data.obj.records.length;i++){
+              dids.push(data.obj.records[i].id);
+            }
+            ajax("/metadata/group/delByIds", "post", JSON.stringify(dids)).then(data => {
+            });
+          });
+        }
+        ajax("/metadata/group/delByIds","post",JSON.stringify(ids)).then(data=>{
+          if(data.success){
+            getGroups(1);
+            getChildGroup(groupObj.id);
+          }else{
+            layer.alert(data.msg);
+          }
+          layer.closeAll();
+        }).catch(res=>{
+
+        })
+      }
+      ,btn2: function(index, layero){
+        layer.closeAll();
+      }
+    });
+
+  }
+
+  function del(){
+    var data2 = layui.table.checkStatus('demo2');
+    var ids = [];
+    for(var i=0;i< data2.data.length;i++){
+      ids.push(data2.data[i].id);
+    }
+    if(ids.length<=0){
+      layer.alert("请选择子分组");
+      return false;
+    }
+    layer.open({
+      content: "确认删除该子分组吗？"
+      ,btn: ['确认',"取消"]
+      ,yes: function(index, layero){
+        ajax("/metadata/group/delByIds","post",JSON.stringify(ids)).then(data=>{
+          if(data.success){
+            getChildGroup(groupObj.id);
+            layer.close(index);
+          }else{
+            layer.alert(data.msg);
+          }
+        }).catch(res=>{
+
+        })
+      }
+      ,btn2: function(index, layero){
+        layer.closeAll();
+      }
+    });
+  }
+  function checkChoice(){
+    if(!groupObj.id){
+      layer.alert("请选择菜单");
+      return false;
+    }
+    return true;
+  }
+  function edit(){
+    if(checkChoice()){
+      var jsondata = {
+        "pager": {
+          "current": 1,
+          "size": 10
+        },
+        "entity": {
+          "id": groupObj.id
+        }
+      }
+      ajax("/metadata/group/list","post",JSON.stringify(jsondata)).then(data=>{
+        layer.open({
+          type: 1,
+          title: "修改分组",
+          area: ['600px', '450px'],
+          maxmin: true,
+          content: '<div id="dataFormDiv"></div>',
+        });
+        layui.laytpl($("#dataFormTpl").html()).render({}, function(html){
+          $("#dataFormDiv").html(html)
+        });
+        layui.form.val("dataForm",data.obj.records[0]);
+      })
+    }
+  }
+  active.edit2 = function () {
+    editT2();
+  }
+  function editT2(){
+    var dataEdit = layui.table.checkStatus('demo2');
+    var ids = [];
+    for(var i=0;i< dataEdit.data.length;i++){
+      ids.push(dataEdit.data[i].id);
+    }
+    if(ids.length<=0){
+      layer.alert("请选择子分组");
+      return false;
+    }else if(ids.length > 1){
+      layer.alert("请选择一条数据进行修改！");
+      return false;
+    }
+      var jsondata = {
+        "pager": {
+          "current": 1,
+          "size": 100
+        },
+        "entity": {
+          "id": ids[0]
+        }
+      }
+      ajax("/metadata/group/list","post",JSON.stringify(jsondata)).then(data=>{
+        layer.open({
+          type: 1,
+          title: "修改子分组",
+          area: ['600px', '450px'],
+          maxmin: true,
+          content: '<div id="dataFormDiv"></div>',
+        });
+        layui.laytpl($("#dataFormTpl").html()).render({}, function(html){
+          $("#dataFormDiv").html(html)
+        });
+        layui.form.val("dataForm",data.obj.records[0]);
+      })
+
+  }
+</script>

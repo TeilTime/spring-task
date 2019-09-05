@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jnetdata.simple.manage.menu.mapper.MenuMapper">
+
+    <select id="tree" resultType="com.jnetdata.simple.manage.menu.model.Menu">
+      select MENUID id,parentid parentId,name,seq,url,companyId from MENUMAN
+      <where>
+          <if test="type != null">
+              type = #{type,jdbcType=INTEGER}
+          </if>
+              and companyId in (
+              select companyId from companyinfo
+              )
+      </where>
+      order by seq
+    </select>
+
+</mapper>

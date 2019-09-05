@@ -1,0 +1,313 @@
+﻿<style>
+  #nav span,.right span{display: none;}
+  #nav a{display: inline-block;width: 40px;height: 56px;text-align: center;border: 1px solid #f5f5f5;}
+  #nav a:nth-of-type(3){display: inline-block;width: 220px;height: 52px; text-align: left;padding-left: 20px;border-top: 2px solid #000;font-weight: bold;}
+  .right{display: inline-block;position: absolute;top: 0;right: 0;}
+  .layui-breadcrumb a{color: #000!important;}
+  .layui-table-header,.layui-table-view,.layui-table-box{overflow: visible;}
+  .layui-table-link:hover{color: #009688!important;}
+  .layui-card-header p{margin-top: 10px;margin-left: 10px;}
+  .layui-form-item .layui-input-block{display: inline-block;margin-left: -5px;}
+  #select .layui-form-select{width: 327px;}
+  th:last-child{text-align: center;}
+  label span{color: red; margin-right: 5px;}
+  #form .layui-form-label{width: 80px;}
+</style>
+<div class="layui-card layadmin-header">
+  <div class="layui-breadcrumb" lay-filter="breadcrumb" id="nav">
+    <a><i class="layui-icon layui-icon-prev"></i></a>
+    <a lay-href=''><i class="layui-icon layui-icon-home"></i></a>
+    <a>系统信息<i class="layui-icon layui-icon-close" style="margin-left: 50px"></i></a>
+    <div class="right">
+      <a><i class="layui-icon layui-icon-next"></i></a>
+      <a><i class="layui-icon layui-icon-down"></i></a>
+    </div>
+  </div>
+</div>
+<div class="layui-fluid">
+  <div class="layui-card" style="height: 760px;" id="index">
+    <div class="layui-card-body">
+      <div>
+        <span>应用信息</span>
+        <div id="apply"></div>
+      </div>
+      <hr/>
+      <div>
+        <span>系统信息</span>
+        <div id="system"></div>
+      </div>
+      <hr/>
+      <div>
+        <span>数据库信息</span>
+        <div id="dataBase"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!--系统信息模板-->
+<script type="text/html"  id="systemTemplate">
+  <div class="layui-row layui-col-space1">
+    <div class="layui-col-md3">
+      <div class="grid-demo grid-demo-bg1">计算机名</div>
+    </div>
+    <div class="layui-col-md3">
+      <div class="grid-demo">{{d.compaterName}}</div>
+    </div>
+    <div class="layui-col-md3">
+      <div class="grid-demo grid-demo-bg1">用户名</div>
+    </div>
+    <div class="layui-col-md3">
+      <div class="grid-demo">{{d.userName}}</div>
+    </div>
+  </div>
+
+  <div class="layui-row layui-col-space1">
+    <div class="layui-col-md3">
+      <div class="grid-demo grid-demo-bg1">系统默认语言：</div>
+    </div>
+    <div class="layui-col-md3">
+      <div class="grid-demo">{{d.language}}</div>
+    </div>
+    <div class="layui-col-md3">
+      <div class="grid-demo grid-demo-bg1">系统默认字符编码：</div>
+    </div>
+    <div class="layui-col-md3">
+      <div class="grid-demo">{{d.code}}</div>
+    </div>
+  </div>
+
+  <div class="layui-row layui-col-space1">
+    <div class="layui-col-md3">
+      <div class="grid-demo grid-demo-bg1">容器类型：</div>
+    </div>
+    <div class="layui-col-md3">
+      <div class="grid-demo">{{d.vessel}}</div>
+    </div>
+    <div class="layui-col-md3">
+      <div class="grid-demo grid-demo-bg1">Java安装目录：</div>
+    </div>
+    <div class="layui-col-md3">
+      <div class="grid-demo">{{d.javaAddress}}</div>
+    </div>
+  </div>
+
+  <div class="layui-row layui-col-space1">
+    <div class="layui-col-md3">
+      <div class="grid-demo grid-demo-bg1">WebServer运行目录：</div>
+    </div>
+    <div class="layui-col-md3">
+      <div class="grid-demo">{{d.webAddress}}</div>
+    </div>
+    <div class="layui-col-md3">
+      <div class="grid-demo grid-demo-bg1">Java的运行环境版本：</div>
+    </div>
+    <div class="layui-col-md3">
+      <div class="grid-demo">{{d.javaEnvironment}}</div>
+    </div>
+  </div>
+
+  <div class="layui-row layui-col-space1">
+    <div class="layui-col-md3">
+      <div class="grid-demo grid-demo-bg1">操作系统的名称：</div>
+    </div>
+    <div class="layui-col-md3">
+      <div class="grid-demo">{{d.systemName}}</div>
+    </div>
+    <div class="layui-col-md3">
+      <div class="grid-demo grid-demo-bg1">操作系统的构架：</div>
+    </div>
+    <div class="layui-col-md3">
+      <div class="grid-demo">{{d.framework}}</div>
+    </div>
+  </div>
+
+  <div class="layui-row layui-col-space1">
+    <div class="layui-col-md3">
+      <div class="grid-demo grid-demo-bg1">操作系统的版本：</div>
+    </div>
+    <div class="layui-col-md3">
+      <div class="grid-demo">{{d.systemVersion}}</div>
+    </div>
+    <div class="layui-col-md3">
+      <div class="grid-demo grid-demo-bg1">CPU核心数：</div>
+    </div>
+    <div class="layui-col-md3">
+      <div class="grid-demo">{{d.cpuNum}}</div>
+    </div>
+  </div>
+
+  <div class="layui-row layui-col-space1">
+    <div class="layui-col-md3">
+      <div class="grid-demo grid-demo-bg1">Ip：</div>
+    </div>
+    <div class="layui-col-md3">
+      <div class="grid-demo">{{d.ip}}</div>
+    </div>
+    <div class="layui-col-md3">
+      <div class="grid-demo grid-demo-bg1">Mac：</div>
+    </div>
+    <div class="layui-col-md3">
+      <div class="grid-demo">{{d.mac}}</div>
+    </div>
+  </div>
+
+  <div class="layui-row layui-col-space1">
+    <div class="layui-col-md3">
+      <div class="grid-demo grid-demo-bg1">虚拟机内存总量：</div>
+    </div>
+    <div class="layui-col-md3">
+      <div class="grid-demo">{{d.memorySum}}</div>
+    </div>
+    <div class="layui-col-md3">
+      <div class="grid-demo grid-demo-bg1">虚拟机空闲内存量：</div>
+    </div>
+    <div class="layui-col-md3">
+      <div class="grid-demo">{{d.memoryFree}}</div>
+    </div>
+  </div>
+
+
+  <div class="layui-row layui-col-space1">
+    <div class="layui-col-md3">
+      <div class="grid-demo grid-demo-bg1">虚拟机使用最大内存量：</div>
+    </div>
+    <div class="layui-col-md3">
+      <div class="grid-demo">{{d.memoryUse}}</div>
+    </div>
+    <div class="layui-col-md3">
+      <div class="grid-demo grid-demo-bg1">&nbsp;</div>
+    </div>
+    <div class="layui-col-md3">
+      <div class="grid-demo">&nbsp;</div>
+    </div>
+  </div>
+</script>
+
+<!--数据库信息-->
+<script type="text/html" id="dataBaseTemplate">
+  <div class="layui-row layui-col-space1">
+    <div class="layui-col-md3">
+      <div class="grid-demo grid-demo-bg1">数据库类型：</div>
+    </div>
+    <div class="layui-col-md3">
+      <div class="grid-demo">{{d.type}}</div>
+    </div>
+    <div class="layui-col-md3">
+      <div class="grid-demo grid-demo-bg1">数据库版本：</div>
+    </div>
+    <div class="layui-col-md3">
+      <div class="grid-demo">{{d.version}}</div>
+    </div>
+  </div>
+
+  <div class="layui-row layui-col-space1">
+    <div class="layui-col-md3">
+      <div class="grid-demo grid-demo-bg1">数据库转义符：</div>
+    </div>
+    <div class="layui-col-md3">
+      <div class="grid-demo">{{d.symbol}}</div>
+    </div>
+    <div class="layui-col-md3">
+      <div class="grid-demo grid-demo-bg1">数据库驱动版本：</div>
+    </div>
+    <div class="layui-col-md3">
+      <div class="grid-demo">{{d.drive}}</div>
+    </div>
+  </div>
+
+  <div class="layui-row layui-col-space1">
+    <div class="layui-col-md3">
+      <div class="grid-demo grid-demo-bg1">数据库地址：</div>
+    </div>
+    <div class="layui-col-md3">
+      <div class="grid-demo">{{d.address}}</div>
+    </div>
+    <div class="layui-col-md3">
+      <div class="grid-demo grid-demo-bg1">用户名：</div>
+    </div>
+    <div class="layui-col-md3">
+      <div class="grid-demo">{{d.userName}}</div>
+    </div>
+  </div>
+</script>
+
+<!--应用信息-->
+<script type="text/html" id="applyTemplate">
+  <div class="layui-row layui-col-space1">
+    <div class="layui-col-md3">
+      <div class="grid-demo grid-demo-bg1">应用名称：</div>
+    </div>
+    <div class="layui-col-md3">
+      <div class="grid-demo"></div>
+    </div>
+    <div class="layui-col-md3">
+      <div class="grid-demo grid-demo-bg1">应用版本：</div>
+    </div>
+    <div class="layui-col-md3">
+      <div class="grid-demo"></div>
+    </div>
+  </div>
+
+  <div class="layui-row layui-col-space1">
+    <div class="layui-col-md3">
+      <div class="grid-demo grid-demo-bg1">使用对象：</div>
+    </div>
+    <div class="layui-col-md3">
+      <div class="grid-demo"></div>
+    </div>
+    <div class="layui-col-md3">
+      <div class="grid-demo grid-demo-bg1">基于框架：</div>
+    </div>
+    <div class="layui-col-md3">
+      <div class="grid-demo"></div>
+    </div>
+  </div>
+
+  <div class="layui-row layui-col-space1">
+    <div class="layui-col-md3">
+      <div class="grid-demo grid-demo-bg1">手册查看：</div>
+    </div>
+    <div class="layui-col-md3">
+      <div class="grid-demo"></div>
+    </div>
+    <div class="layui-col-md3">
+      <div class="grid-demo grid-demo-bg1">特色描述：</div>
+    </div>
+    <div class="layui-col-md3">
+      <div class="grid-demo"></div>
+    </div>
+  </div>
+
+
+</script>
+
+<script>
+    $(function () {
+       getSystemInfo();
+    })
+    function getSystemInfo() {
+        $.ajax({
+            type:'get',
+            url:'/manage/system/getSystem',
+            dataType:'json',
+            success:function (data) {
+                console.log(data.obj)
+                setTemplate('systemTemplate','system',data.obj.system);
+                setTemplate('dataBaseTemplate','dataBase',data.obj.data)
+                setTemplate('applyTemplate','apply',{})
+            }
+        })
+
+    }
+
+    function setTemplate(template,div,data) {
+        layui.laytpl($("#"+template).html()).render(data, function(html){
+            $("#"+div).html(html)
+            layui.form.render();
+        });
+
+    }
+
+</script>
