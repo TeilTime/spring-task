@@ -1,0 +1,442 @@
+﻿<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <title>聚网快速开发平台</title>
+  <link rel="stylesheet" href="../js/layui/css/layui.css" media="all">
+  <link rel="stylesheet" href="../../../public/style/admin.css" media="all">
+  <script type="text/javascript" src="../../../public/js/jquery-2.2.2.min.js"></script>
+  <script type="text/javascript" src="../js/layui/layui.all.js"></script>
+  <link rel="stylesheet" href="../js/tree/css/metroStyle/metroStyle.css">
+  <script src="../js/tree/js/jquery.ztree.all.min.js"></script>
+  <script src="../js/ueditor/ueditor.config.js"></script>
+  <script src="../js/ueditor/ueditor.all.js"></script>
+  <script src="../js/ueditor/lang/zh-cn/zh-cn.js"></script>
+
+  <script src="../js/common.js"></script>
+
+  <style>
+    .layadmin-header{height: 40px}
+    .layui-layout-admin .layui-logo{width:219px;}
+    .button-bar{text-align: center;}
+    .ztree{overflow: hidden;
+      height: 690px;
+      overflow-y: scroll;
+      width: 310px;
+
+    }
+    .ztree li{margin-top: 5px;}
+    .ztree li span.button.ico_close,.ztree li span.button.ico_open,.ztree li span.button.ico_docu{background-position: center !important;    margin: 0 5px;    background-size: 70% !important;}
+    .layui-fluid{    height: 800px;}
+    .layui-fluid .layui-col-space12{    height: 100%;}
+    .h100{height: 100%;}
+    .md3-left{width: 20%;height: 100%}
+    .md3-right{width: 80%;height: 100%}
+    .layui-layout-admin .layui-body{left:0;top:0;}
+  </style>
+</head>
+<body>
+<div>
+  <div class="layui-layout layui-layout-admin">
+    <!-- 主体内容 -->
+    <div class="layui-body" id="LAY_app_body">
+      <div class="layadmin-tabsbody-item layui-show">
+      </div>
+    </div>
+    <!-- 辅助元素，一般用于移动设备下遮罩 -->
+    <div class="layadmin-body-shade" layadmin-event="shade"></div>
+  </div>
+</div>
+
+<!--操作列模板-->
+<script type="text/html" id="barDemo">
+  <a class="layui-btn layui-btn-xs" lay-event="restore">还原</a>
+  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+
+<!--操作列模板-->
+<script type="text/html" id="userItemTpl">
+  {{# if(d.success && d.obj.status){ }}
+  <a href="javascript:;">
+    <cite>{{d.obj.user.name}}</cite>
+  </a>
+  <dl class="layui-nav-child">
+    <dd><a lay-href="set/user/info">基本资料</a></dd>
+    <dd><a lay-href="set/user/password">修改密码</a></dd>
+    <hr>
+    <dd style="text-align: center;"><a href="javascript:logout()">退出</a></dd>
+  </dl>
+  {{# }else{ }}
+  <a href="/login.html">
+    <cite>登陆</cite>
+  </a>
+  {{# } }}
+</script>
+
+
+<script type="text/html" id="siteTemplate">
+  {{# layui.each(d, function(index, item){ }}
+  <input type="checkbox" value="{{item.id}}">
+  <span>{{item.name}}</span>
+  <button class="delBtn" data-id="{{item.id}}">删除</button>
+  {{# }); }}
+</script>
+
+<script>
+  var paramObj={};
+
+  function findMenu() {
+    var url = "/manage/menu/getMenu";
+    ajax(url,"get",{type:1}).then(res=>{
+      layui.use(['element','laytpl'], function(){
+        layui.laytpl($("#menuTemplate").html()).render(res, function(html){
+          $("#menu").html(html);
+        });
+        var element = layui.element; //导航的hover效果、二级菜单等功能，需要依赖element模块
+        element.init();
+      });
+    }).catch(res=>{
+
+    })
+  }
+  function getUserNoRead(){
+    var jsondata={
+      "pager":{
+        "current":1,
+        "size":10,
+        "sortProps": [
+          {
+            "key": "status",
+            "value": true
+          },
+          {
+            "key": "sendTime",
+            "value": false
+          }
+        ]
+      },
+      "entity":{
+        "receptionId":-1
+      }
+    }
+    $.ajax({
+      type:"post",
+      url:"/manage/msg/list",
+      data:JSON.stringify(jsondata),
+      contentType:"application/json",
+      dataType:"json",
+      success:function (data) {
+        console.log(data);
+        var res =data.obj.records;
+        var count = 0;
+        for(var i = 0 ; i < res.length ; i++){
+          if(res[i].status == 0){
+            count++;
+          }
+        }
+        if(count > 0){
+          $('.layui-badge-dot').show();
+        }else{
+          $('.layui-badge-dot').hide();
+        }
+      }
+    })
+  }
+  function getUser() {
+    var url = "/manage/user/getLoginUser"
+    ajax(url,"get",{}).then(res=>{
+      layui.laytpl($("#userItemTpl").html()).render(res, function(html){
+        $("#userItem").html(html);
+      });
+    }).catch(res=>{
+
+    })
+  }
+  function loaddiv(url,name){
+    var urlparams;
+    if(url.indexOf("?")>0){
+      urlparams = url.split("?")[1].split("&");
+      urlparams.forEach(function(item){
+        var param = item.split("=");
+        paramObj[param[0]] = param[1];
+      })
+    }
+    if($.fn.zTree.getZTreeObj("treeDemo")){
+      $.fn.zTree.getZTreeObj("treeDemo").destroy();
+    }
+    $('#LAY_app_body div').html("");
+    $("#tabName").text(name);
+    if(url){
+      $("#LAY_app_body div").load(url);
+    }else{
+      $("#LAY_app_body div").load("/building.html");
+    }
+    layui.form.render();
+  }
+  function logout(){
+    ajax("/manage/home/ajaxLeave","post",{}).then(res=>{
+//            layer.alert(res.msgConfig,function(){
+      window.location.reload(true);
+//            })
+    });
+  }
+  function setTpl(tplId,divId,data) {
+    layui.laytpl($("#"+tplId).html()).render(data, function(html){
+      $("#"+divId).html(html)
+    });
+  }
+  layui.element.init();
+</script>
+
+
+
+<script type='module'>
+  import menu from "../../../public/js/common/menu.js";
+
+  $(function(){
+    loaddiv("/simple/manage/role/list.html","用户管理");
+  });
+
+</script >
+<script>
+  function changeClassName(event) {
+    event.srcElement.parentNode.className='layui-nav-item  layui-nav-itemed'
+    if(event.srcElement.parentNode.className.indexOf("layui-nav-itemed")!== -1){
+      event.srcElement.parentNode.className='layui-nav-item'
+    }else{
+      event.srcElement.parentNode.className='layui-nav-item  layui-nav-itemed'
+    }
+
+  }
+</script>
+
+<script type="text/html" id="setLimitTpl">
+  <div class="h100" style="padding: 20px 0 0 40px" id="temp">
+    <p><i class="layui-icon layui-icon-user"></i>{{d.name}}</p>
+    <form class="layui-form" lay-filter="limitForm">
+      <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+        <ul class="layui-tab-title" id="getAllLimit">
+          <li class="layui-this">机构类权限</li>
+          <li>站点类权限</li>
+          <li>栏目类权限</li>
+          <li>元数据类权限</li>
+          <li>菜单权限</li>
+          <li>工作流权限</li>
+        </ul>
+        <div class="layui-tab-content" style="height: 100px;">
+          <div class="layui-tab-item layui-show siteRightInfo"  style="height: 500px;overflow: auto">
+            <table class="layui-hide" id="companyRightInfoTable"></table>
+            <div class="layui-btn-container" style="position: absolute;left:500px;bottom: 15px;">
+              <div class="button-bar">
+                <button class="layui-btn" lay-submit lay-filter="addRightInfo">确认</button>
+                <button class="layui-btn" type="button" data-type="close">取消</button>
+              </div>
+            </div>
+          </div>
+          <div class="layui-tab-item siteRightInfo" style="height: 500px;overflow: auto">
+            <table class="layui-hide" id="siteRightInfoTable"></table>
+            <div class="layui-btn-container" style="position: absolute;left:500px;bottom: 15px;">
+              <div class="button-bar">
+                <button class="layui-btn" lay-submit lay-filter="addRightInfo">确认</button>
+                <button class="layui-btn" type="button" data-type="close">取消</button>
+              </div>
+            </div>
+          </div>
+          <div class="layui-tab-item siteRightInfo" style="height: 500px;overflow: auto">
+            <table class="layui-hide" id="programaRightInfoTable"></table>
+            <div class="layui-btn-container" style="position: absolute;left:500px;bottom: 15px;">
+              <div class="button-bar">
+                <button class="layui-btn" lay-submit lay-filter="addRightInfo">确认</button>
+                <button class="layui-btn" type="button" data-type="close">取消</button>
+              </div>
+            </div>
+          </div>
+          <div class="layui-tab-item" style="height: 500px;overflow: auto">
+          </div>
+          <div class="layui-tab-item" id="menuLimit" style="height: 500px;overflow: auto">
+            <table class="layui-hide" id="menuTable"></table>
+            <div class="layui-btn-container" style="position: absolute;left:500px;bottom: 15px;">
+              <div class="button-bar">
+                <button class="layui-btn" lay-submit lay-filter="addRightInfo">确认</button>
+                <button class="layui-btn" type="button" data-type="close">取消</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <input type="hidden" name="id" value="{{d.id}}">
+      <input type="hidden" name="type" value="{{d.type}}">
+    </form>
+  </div>
+</script>
+<script id="site11" type="text/html">
+  <input type="checkbox" name="limitBox" value="site:edit:{{d.id}}" lay-skin="primary">
+</script>
+<script id="site12" type="text/html">
+  <input type="checkbox" name="limitBox" value="site:delete:{{d.id}}" lay-skin="primary"  >
+</script>
+<script id="site13" type="text/html">
+  <input type="checkbox" name="limitBox" value="site:view:{{d.id}}" lay-skin="primary"  >
+</script>
+<script id="site14" type="text/html">
+  <input type="checkbox" name="limitBox" value="site:limit:{{d.id}}" lay-skin="primary"  >
+</script>
+<script id="companyLimit1" type="text/html">
+  <input type="checkbox" name="limitBox" value="site:{{d.value}}:{{d.id}}" lay-skin="primary">
+</script>
+<script  id="siteName" type="text/html">
+  {{#if(d.parentId === "0"){}}
+  <div><img src="{{d.icon}}" alt="">&nbsp;&nbsp;&nbsp;{{d.name}}</div>
+  {{#  } else if(d.parentId === "333"){ }}
+  <div style="padding-left: 30px"><img src="{{d.icon}}" alt="">&nbsp;&nbsp;&nbsp;{{d.name}}</div>
+  {{#  } else{ }}
+  <div style="padding-left: 15px"><img src="{{d.icon}}" alt="">&nbsp;&nbsp;&nbsp;{{d.name}}</div>
+  {{#}}}
+</script>
+<script id="operations1" type="text/html">
+  {{#if(d.url){}}
+  <input type="checkbox" name="limitBox" value="{{d.id}};{{d.url}}" lay-skin="primary">
+  {{#}}}
+</script>
+<script>
+  layui.form.on('submit(addRightInfo)', function(data){
+    var arr=[];
+    $(".siteRightInfo input:checkbox:checked").each(function(){
+      arr.push({
+        objId:data.field.id,
+        objType:data.field.type,
+        rightValue:$(this).val(),
+        oprIdType:1
+      });
+    })
+    $("#menuLimit input:checkbox:checked").each(function(){
+      arr.push({
+        objId:data.field.id,
+        objType:data.field.type,
+        rightValue:$(this).val().split(";")[1],
+        oprId:$(this).val().split(";")[0],
+        oprIdType:3
+      });
+    })
+    ajax("/manage/limitRelation/setLimit","post",JSON.stringify(arr)).then(function (res) {
+      layer.closeAll();
+    })
+    return false;
+  });
+  function setLimit(id,name,type) {
+    layer.open({
+      type: 1
+      , title: '权限管理'
+      , area: ['1100px', '721px']
+      , shade: 0.3
+      , maxmin: false
+      ,btnAlign:"c"
+      ,content:"<div id='form3'></div>"
+    });
+    layui.laytpl($("#setLimitTpl").html()).render({id:id,name:name,type:type}, function(html){
+      $("#form3").html(html);
+      layui.form.render();
+    })
+    getRightInfo(id,type);
+  }
+  function getRightInfo(id,type){
+    var uri = type==0?"userPermission":type==1?"rolePermission":"groupPermission";
+    ajax("/manage/limitRelation/"+uri,"post",JSON.stringify(id)).then(function (data) {
+      console.log(data);
+      getSiteDate(data.obj);
+      getMenuDate(data.obj);
+    })
+  }
+  function getSiteDate(data){
+    ajax("/manage/programa/getTreeData","post").then(function (res) {
+      var companys = [];
+      var sites = [];
+      var programa = [];
+      for(var i in res.obj){
+        if(res.obj[i].isSite == 0){
+          companys.push(res.obj[i]);
+        }else if(res.obj[i].isSite == 1){
+          sites.push(res.obj[i]);
+        }else{
+          programa.push(res.obj[i]);
+        }
+      }
+      layui.table.render({
+        elem: '#companyRightInfoTable'
+        ,data:companys
+        ,cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+        ,limit:res.obj.length
+        ,cols: [[
+          {field:'site', width:250, title: '机构',templet:"#siteName"}
+          ,{field:'update', width:195, title: '修改机构',align:"center",templet:"#site11"}
+          ,{field:'delete', width:190, title: '删除机构',align:"center",templet:"#site12"}
+          ,{field:'review', width:190, title: '预览机构',align:"center",templet:"#site13"}
+          ,{field:'score', title: '设置权限',width:190,align:"center",templet:"#site14"}
+        ]]
+        ,done:function(){
+          layui.table.render({
+            elem: '#siteRightInfoTable'
+            ,data:sites
+            ,cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+            ,limit:res.obj.length
+            ,cols: [[
+              {field:'site', width:250, title: '<div>机构：&nbsp;&nbsp;</div>',templet:"#siteName"}
+              ,{field:'update', width:195, title: '修改站点',align:"center",templet:"#site11"}
+              ,{field:'delete', width:190, title: '删除站点',align:"center",templet:"#site12"}
+              ,{field:'review', width:190, title: '预览站点',align:"center",templet:"#site13"}
+              ,{field:'score', title: '设置权限',width:190,align:"center",templet:"#site14"}
+            ]]
+            ,done:function(){
+              layui.table.render({
+                elem: '#programaRightInfoTable'
+                ,data:programa
+                ,cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+                ,limit:res.obj.length
+                ,cols: [[
+                  {field:'site', width:250, title: '<div>站点：&nbsp;&nbsp;</div>',templet:"#siteName"}
+                  ,{field:'update', width:195, title: '修改栏目',align:"center",templet:"#site11"}
+                  ,{field:'delete', width:190, title: '删除栏目',align:"center",templet:"#site12"}
+                  ,{field:'review', width:190, title: '预览栏目',align:"center",templet:"#site13"}
+                  ,{field:'score', title: '设置权限',width:190,align:"center",templet:"#site14"}
+                ]]
+                ,done:function(){
+                  data.forEach(function(item){
+                    $(".siteRightInfo input[value='"+item+"'").prop("checked",true);
+                  });
+                  layui.form.render();
+                }
+              });
+            }
+          });
+        }
+      });
+    });
+  }
+
+  function getMenuDate(data){
+    ajax("/manage/menu/tree","get",{type:1}).then(res=>{
+      if(res.success){
+        layui.table.render({
+          elem: '#menuTable'
+          ,data:res.obj
+          ,limit:res.obj.length
+          ,cols: [[
+            {field:'name', width:"50%", title: '菜单全称',align:'center'}
+            ,{field:'operation', width:"50%", title: '操作',align:'center',templet:"#operations1"}
+          ]]
+          ,done:function(){
+            data.forEach(function(item){
+              $("#menuLimit input[value='"+item+"'").prop("checked",true);
+            });
+            layui.form.render();
+          }
+        });
+      }
+    })
+  }
+</script>
+
+</body>
+</html>
